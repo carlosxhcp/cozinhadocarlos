@@ -1,0 +1,113 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}Receitas | Administração{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Receitas</h1>
+        <p>Gerencie todas as receitas cadastradas.</p>
+    </div>
+
+    <a href="{% url 'painel:criar_receita' %}" class="btn-primary-custom">
+        <i class="bi bi-plus-lg"></i>
+        Nova receita
+    </a>
+</div>
+
+<div class="content-card">
+
+    <div class="card-heading">
+        <div>
+            <h3>Lista de receitas</h3>
+            <p>{{ receitas|length }} receita(s) encontrada(s).</p>
+        </div>
+
+        <form method="get" class="search-form">
+            <input
+                type="text"
+                name="q"
+                value="{{ busca }}"
+                placeholder="Buscar receita..."
+                class="form-control"
+            >
+
+            <button type="submit" class="search-button">
+                <i class="bi bi-search"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table custom-table">
+
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Tempo</th>
+                    <th>Rendimento</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for receita in receitas %}
+
+                <tr>
+                    <td>
+                        <strong>{{ receita.nome }}</strong>
+                    </td>
+
+                    <td>{{ receita.categoria.nome }}</td>
+
+                    <td>{{ receita.tempo_preparo }} min</td>
+
+                    <td>{{ receita.rendimento }} porções</td>
+
+                    <td>
+                        <div class="action-buttons">
+
+                            <a
+                                href="{% url 'painel:editar_receita' receita.pk %}"
+                                class="action-button"
+                                title="Editar"
+                            >
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <a
+                                href="{% url 'painel:excluir_receita' receita.pk %}"
+                                class="action-button delete-action"
+                                title="Excluir"
+                            >
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                        </div>
+                    </td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5" class="empty-state">
+                        <i class="bi bi-journal-x"></i>
+                        <p>Nenhuma receita encontrada.</p>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

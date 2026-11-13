@@ -1,0 +1,43 @@
+
+{% extends 'painel/base.html' %}
+
+{% block content %}
+
+{% block title %}Excluir Ingrediente | Receitas{% endblock %}
+
+
+<div class="page-header">
+    <div>
+        <h1>Excluir ingrediente</h1>
+        <p>Confirme a exclusão do ingrediente.</p>
+    </div>
+</div>
+
+<div class="form-card">
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        Você está prestes a excluir o ingrediente:
+        <strong>{{ ingrediente.nome }}</strong>
+    </div>
+
+    <p>
+        Essa ação não poderá ser desfeita.
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-actions">
+            <a href="{% url 'painel:lista_ingredientes' %}"
+               class="btn btn-light">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-danger">
+                Excluir ingrediente
+            </button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}{{ titulo }} | Administração{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>{{ titulo }}</h1>
+        <p>Preencha as informações da receita.</p>
+    </div>
+
+    <a href="{% url 'painel:lista_receitas' %}" class="btn-secondary-custom">
+        Voltar
+    </a>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+
+    {% if form.errors or formset.errors %}
+    <div class="alert alert-danger">
+        Existem campos com erros. Confira as informações preenchidas.
+        {{ form.errors }}
+        {{ formset.errors }}
+    </div>
+    {% endif %}
+
+    <div class="content-card form-card">
+
+        <div class="card-heading">
+            <div>
+                <h3>Informações gerais</h3>
+                <p>Dados principais da receita.</p>
+            </div>
+        </div>
+
+        <div class="form-content">
+
+            <div class="form-field">
+                <label>Nome da receita</label>
+                {{ form.nome }}
+            </div>
+
+            <div class="form-field">
+                <label>Identificador (slug)</label>
+                {{ form.slug }}
+            </div>
+
+            <div class="form-field">
+                <label>Descrição</label>
+                {{ form.descricao }}
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label>Categoria</label>
+                    {{ form.categoria }}
+                </div>
+
+                <div class="form-field">
+                    <label>Imagem</label>
+                    {{ form.imagem }}
+                </div>
+
+                <div class="form-field">
+                    <label>Tempo de preparo (minutos)</label>
+                    {{ form.tempo_preparo }}
+                </div>
+
+                <div class="form-field">
+                    <label>Rendimento (porções)</label>
+                    {{ form.rendimento }}
+                </div>
+
+            </div>
+
+            {% if receita.imagem %}
+            <div class="current-image">
+                <span>Imagem atual:</span>
+                <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
+            </div>
+            {% endif %}
+
+            <div class="form-field">
+                <label>Modo de preparo</label>
+                {{ form.modo_preparo }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="content-card form-card ingredient-card">
+
+        <div class="card-heading">
+            <div>
+                <h3>Ingredientes</h3>
+                <p>Selecione os ingredientes e informe suas quantidades.</p>
+            </div>
+        </div>
+
+        <div class="form-content">
+
+            {{ formset.management_form }}
+
+            <div id="ingredient-forms" data-prefix="{{ formset.prefix }}">
+
+                {% for ingrediente_form in formset %}
+
+                <div class="ingredient-row">
+
+                    {% for hidden in ingrediente_form.hidden_fields %}
+                    {% if hidden.name != ingrediente_form.DELETE.html_name %}
+                    {{ hidden }}
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="form-field">
+                        <label>Ingrediente</label>
+                        {{ ingrediente_form.ingrediente }}
+                    </div>
+
+                    <div class="form-field">
+                        <label>Quantidade</label>
+                        {{ ingrediente_form.quantidade }}
+                    </div>
+
+                    <div class="ingredient-actions">
+
+    <div class="delete-input" hidden>
+        {{ ingrediente_form.DELETE }}
+    </div>
+
+    <button type="button" class="btn-remove-ingredient">
+        <i class="bi bi-trash"></i>
+        Remover
+    </button>
+
+</div>
+
+                    {% if ingrediente_form.errors %}
+                    <div class="alert alert-danger">
+                        {{ ingrediente_form.errors }}
+                    </div>
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <button type="button" id="add-ingredient" class="btn btn-outline-primary mt-3">
+
+                <i class="bi bi-plus-circle"></i>
+                Adicionar ingrediente
+
+            </button>
+
+            <!-- MODELO PARA NOVAS LINHAS -->
+            <template id="empty-ingredient-form">
+
+                <div class="ingredient-row">
+
+                    {% for hidden in formset.empty_form.hidden_fields %}
+                    {% if hidden.name != formset.empty_form.DELETE.html_name %}
+                    {{ hidden }}
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="form-field">
+                        <label>Ingrediente</label>
+                        {{ formset.empty_form.ingrediente }}
+                    </div>
+
+                    <div class="form-field">
+                        <label>Quantidade</label>
+                        {{ formset.empty_form.quantidade }}
+                    </div>
+
+                    <div class="ingredient-actions">
+
+    <div class="delete-input" hidden>
+        {{ formset.empty_form.DELETE }}
+    </div>
+
+    <button type="button" class="btn-remove-ingredient">
+        <i class="bi bi-trash"></i>
+        Remover
+    </button>
+
+</div>
+                </div>
+
+            </template>
+
+        </div>
+
+    </div>
+
+
+    <div class="form-actions">
+
+        <a href="{% url 'painel:lista_receitas' %}" class="btn-secondary-custom">
+            Cancelar
+        </a>
+
+        <div class="d-flex gap-2 flex-wrap">
+
+            <button type="submit" name="status" value="rascunho" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark"></i>
+                Salvar como rascunho
+            </button>
+
+            <button type="submit" name="status" value="publicada" class="btn btn-primary">
+                <i class="bi bi-check-circle"></i>
+
+                {% if receita.pk %}
+                Salvar e publicar
+                {% else %}
+                Publicar receita
+                {% endif %}
+            </button>
+
+        </div>
+
+    </div>
+
+</form>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const container = document.getElementById('ingredient-forms');
+    const addButton = document.getElementById('add-ingredient');
+    const template = document.getElementById('empty-ingredient-form');
+
+    if (!container || !addButton || !template) return;
+
+    const prefix = container.dataset.prefix;
+
+    const totalForms = document.getElementById(
+        `id_${prefix}-TOTAL_FORMS`
+    );
+
+    // Inicializa o TomSelect quando uma nova linha é criada.
+    function initializeTomSelect(element) {
+        element.querySelectorAll('.tom-select').forEach(function (select) {
+            if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+                new TomSelect(select, {
+                    create: false,
+                    allowEmptyOption: true,
+                    placeholder: select.dataset.placeholder || 'Pesquisar...'
+                });
+            }
+        });
+    }
+
+    // Adiciona ingrediente.
+    addButton.addEventListener('click', function () {
+
+        const index = parseInt(totalForms.value, 10);
+
+        const html = template.innerHTML.replace(/__prefix__/g, index);
+
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html.trim();
+
+        const newForm = wrapper.firstElementChild;
+
+        container.appendChild(newForm);
+
+        totalForms.value = index + 1;
+
+        initializeTomSelect(newForm);
+    });
+
+    // Remove ingrediente.
+    container.addEventListener('click', function (event) {
+
+        const button = event.target.closest('.btn-remove-ingredient');
+
+        if (!button) return;
+
+        const row = button.closest('.ingredient-row');
+
+        if (!row) return;
+
+        const deleteCheckbox = row.querySelector(
+            'input[name$="-DELETE"]'
+        );
+
+        if (deleteCheckbox) {
+            deleteCheckbox.checked = true;
+            row.hidden = true;
+        }
+
+    });
+
+});
+</script>
+
+
+
+{% endblock %}

@@ -1,0 +1,115 @@
+
+{% extends 'painel/base.html' %}
+
+{% block content %}
+
+{% block title %}Ingredientes | Receitas{% endblock %}
+
+
+<div class="page-header">
+    <div>
+        <h1>Ingredientes</h1>
+        <p>Gerencie os ingredientes utilizados nas receitas.</p>
+    </div>
+
+    <a href="{% url 'painel:criar_ingrediente' %}" class="btn btn-dark">
+        <i class="bi bi-plus-lg"></i>
+        Novo ingrediente
+    </a>
+</div>
+
+<div class="content-card">
+
+    <!-- Pesquisa -->
+    <form method="get" class="mb-4">
+        <div class="d-flex gap-2">
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Pesquisar ingrediente..."
+                value="{{ busca }}"
+            >
+
+            <button type="submit" class="btn btn-dark">
+                <i class="bi bi-search"></i>
+            </button>
+
+            {% if busca %}
+                <a href="{% url 'painel:lista_ingredientes' %}"
+                   class="btn btn-outline-secondary">
+                    Limpar
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    <!-- Tabela -->
+    <div class="table-responsive">
+        <table class="table align-middle">
+
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Utilização</th>
+                    <th class="text-end">Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for ingrediente in ingredientes %}
+                <tr>
+                    <td>
+                        <strong>{{ ingrediente.nome }}</strong>
+                    </td>
+
+                    <td>
+                        {{ ingrediente.receitas.count }} receita(s)
+                    </td>
+
+                    <td class="text-end">
+                        <a
+                            href="{% url 'painel:editar_ingrediente' ingrediente.pk %}"
+                            class="btn btn-sm btn-outline-dark"
+                            title="Editar"
+                        >
+                            <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <a
+                            href="{% url 'painel:excluir_ingrediente' ingrediente.pk %}"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Excluir"
+                        >
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center py-5">
+                        <i class="bi bi-basket fs-2 text-secondary"></i>
+
+                        <p class="mt-2 mb-0">
+                            {% if busca %}
+                                Nenhum ingrediente encontrado.
+                            {% else %}
+                                Nenhum ingrediente cadastrado.
+                            {% endif %}
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="text-secondary small">
+        Total de ingredientes encontrados: {{ ingredientes|length }}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+
+{% extends 'painel/base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1>Rascunhos</h1>
+        <p>Receitas que ainda não foram publicadas.</p>
+    </div>
+
+    <a href="{% url 'painel:criar_receita' %}" class="btn btn-primary">
+        Nova receita
+    </a>
+</div>
+
+<form method="GET" class="mb-4">
+    <div class="d-flex gap-2">
+        <input
+            type="text"
+            name="q"
+            class="form-control"
+            placeholder="Pesquisar rascunhos..."
+            value="{{ busca }}"
+        >
+
+        <button type="submit" class="btn btn-dark">
+            Pesquisar
+        </button>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table align-middle">
+        <thead>
+            <tr>
+                <th>Receita</th>
+                <th>Categoria</th>
+                <th>Tempo</th>
+                <th>Rendimento</th>
+                <th class="text-end">Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for receita in receitas %}
+                <tr>
+                    <td>
+                        <strong>{{ receita.nome|default:"Sem título" }}</strong>
+                        <br>
+                        <small class="text-muted">Rascunho</small>
+                    </td>
+
+                    <td>{{ receita.categoria|default:"Não definida" }}</td>
+
+                    <td>{{ receita.tempo_preparo|default:"-" }} min</td>
+
+                    <td>{{ receita.rendimento|default:"-" }}</td>
+
+                    <td class="text-end">
+                        <a
+                            href="{% url 'painel:editar_receita' receita.pk %}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            Continuar editando
+                        </a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        Nenhum rascunho encontrado.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

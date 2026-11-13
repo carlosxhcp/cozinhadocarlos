@@ -1,0 +1,133 @@
+
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}{{ receita.nome }} | Receitas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/pages/receita.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- CABEÇALHO DA RECEITA -->
+<section class="recipe-header">
+    <div class="container">
+
+        <div class="recipe-breadcrumb">
+            <a href="{% url 'home' %}">Início</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>{{ receita.categoria.nome }}</span>
+        </div>
+
+        <div class="recipe-title">
+            <span class="recipe-category">
+                {{ receita.categoria.nome }}
+            </span>
+
+            <h1>{{ receita.nome }}</h1>
+
+            <p>{{ receita.descricao }}</p>
+        </div>
+
+        <div class="recipe-details">
+
+            <div class="recipe-detail-item">
+                <i class="bi bi-clock"></i>
+                <div>
+                    <span>Tempo de preparo</span>
+                    <strong>{{ receita.tempo_preparo }} minutos</strong>
+                </div>
+            </div>
+
+            <div class="recipe-detail-item">
+                <i class="bi bi-people"></i>
+                <div>
+                    <span>Rendimento</span>
+                    <strong>{{ receita.rendimento }} porções</strong>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- IMAGEM PRINCIPAL -->
+<section class="recipe-cover">
+    <div class="container">
+
+        {% if receita.imagem %}
+            <img src="{{ receita.imagem.url }}"
+                 alt="{{ receita.nome }}">
+        {% else %}
+            <div class="recipe-cover-placeholder">
+                <i class="bi bi-image"></i>
+                <span>Imagem não disponível</span>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+
+<!-- CONTEÚDO DA RECEITA -->
+<section class="recipe-content-section">
+    <div class="container">
+
+        <div class="recipe-content-grid">
+
+            <!-- INGREDIENTES -->
+            <aside class="recipe-ingredients">
+
+                <div class="recipe-section-heading">
+                    <span>O QUE VOCÊ VAI PRECISAR</span>
+                    <h2>Ingredientes</h2>
+                </div>
+
+                <div class="ingredients-list">
+
+                    {% for item in ingredientes %}
+
+                        <div class="ingredient-item">
+                            <span class="ingredient-name">
+                                {{ item.ingrediente.nome }}
+                            </span>
+
+                            <strong>
+                                {{ item.quantidade }}
+                            </strong>
+                        </div>
+
+                    {% empty %}
+
+                        <p>Nenhum ingrediente cadastrado.</p>
+
+                    {% endfor %}
+
+                </div>
+
+            </aside>
+
+
+            <!-- MODO DE PREPARO -->
+            <div class="recipe-preparation">
+
+                <div class="recipe-section-heading">
+                    <span>PASSO A PASSO</span>
+                    <h2>Modo de preparo</h2>
+                </div>
+
+                <div class="preparation-text">
+                    {{ receita.modo_preparo|linebreaks }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

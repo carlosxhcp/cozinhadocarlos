@@ -1,0 +1,58 @@
+
+{% extends 'painel/base.html' %}
+
+{% block content %}
+
+{% block title %}Excluir Categoria | Receitas{% endblock %}
+
+
+<div class="page-header">
+    <div>
+        <h1>Excluir categoria</h1>
+        <p>Confirme a exclusão da categoria selecionada.</p>
+    </div>
+
+    <a href="{% url 'painel:lista_categorias' %}" class="btn btn-outline-dark">
+        <i class="bi bi-arrow-left"></i>
+        Voltar
+    </a>
+</div>
+
+<div class="content-card">
+
+    <div class="text-center py-4">
+
+        <i class="bi bi-exclamation-triangle text-danger"
+           style="font-size: 48px;"></i>
+
+        <h4 class="mt-3">Deseja realmente excluir esta categoria?</h4>
+
+        <p class="text-secondary mt-2">
+            Você está prestes a excluir a categoria
+            <strong>{{ categoria.nome }}</strong>.
+        </p>
+
+        <p class="text-secondary small">
+            Essa ação não poderá ser desfeita.
+        </p>
+
+        <form method="post" class="mt-4">
+            {% csrf_token %}
+
+            <a href="{% url 'painel:lista_categorias' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash"></i>
+                Confirmar exclusão
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

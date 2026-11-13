@@ -1,0 +1,118 @@
+
+{% extends 'painel/base.html' %}
+
+{% block title %}Visão geral | Receitas{% endblock %}
+
+{% block content %}
+
+<div class="page-heading">
+    <div>
+        <h1>Visão geral</h1>
+        <p>Acompanhe as informações do seu site.</p>
+    </div>
+
+    <a href="{% url 'painel:criar_receita' %}" class="btn-primary-custom">
+        <i class="bi bi-plus-lg"></i>
+        Nova receita
+    </a>
+</div>
+
+<!-- Indicadores -->
+<div class="stats-grid">
+
+    <div class="stat-card">
+        <div class="stat-icon icon-recipes">
+            <i class="bi bi-journal-text"></i>
+        </div>
+
+        <div>
+            <span>Total de receitas</span>
+            <h2>{{ total_receitas }}</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon icon-categories">
+            <i class="bi bi-tags"></i>
+        </div>
+
+        <div>
+            <span>Categorias</span>
+            <h2>{{ total_categorias }}</h2>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon icon-ingredients">
+            <i class="bi bi-basket"></i>
+        </div>
+
+        <div>
+            <span>Ingredientes</span>
+            <h2>{{ total_ingredientes }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<!-- Receitas recentes -->
+<div class="content-card">
+
+    <div class="card-heading">
+        <div>
+            <h3>Receitas recentes</h3>
+            <p>Últimas receitas cadastradas no sistema.</p>
+        </div>
+
+        <a href="#" class="text-link">Ver todas</a>
+    </div>
+
+    <div class="table-responsive">
+
+        <table class="table custom-table">
+
+            <thead>
+                <tr>
+                    <th>Receita</th>
+                    <th>Categoria</th>
+                    <th>Tempo</th>
+                    <th>Rendimento</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for receita in receitas_recentes %}
+
+                <tr>
+                    <td>
+                        <strong>{{ receita.nome }}</strong>
+                    </td>
+
+                    <td>{{ receita.categoria.nome }}</td>
+
+                    <td>{{ receita.tempo_preparo }} min</td>
+
+                    <td>{{ receita.rendimento }} porções</td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="4" class="empty-state">
+                        <i class="bi bi-journal-x"></i>
+                        <p>Nenhuma receita cadastrada ainda.</p>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+
+{% extends 'frontend/base.html' %}
+{% load static %}
+
+{% block title %}Início | Receitas{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'frontend/css/pages/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- BANNER PRINCIPAL -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+
+            <div class="hero-text">
+                <span class="hero-label">DESCUBRA NOVOS SABORES</span>
+
+                <h1>
+                    Encontre sua próxima
+                    <span>receita favorita.</span>
+                </h1>
+
+                <p>
+                    Explore receitas deliciosas, descubra novos ingredientes
+                    e encontre inspiração para preparar algo especial.
+                </p>
+
+                <form class="hero-search" method="GET" action="#">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="q"
+                           placeholder="O que você deseja preparar?">
+                    <button type="submit">Pesquisar</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- CATEGORIAS -->
+<section class="categories-section">
+    <div class="container">
+
+        <div class="section-header">
+            <div>
+                <span class="section-label">EXPLORE</span>
+                <h2>Explore por categorias</h2>
+            </div>
+        </div>
+
+        <div class="categories-grid">
+
+            {% for categoria in categorias %}
+                <a href="#" class="category-card">
+
+                    {% if categoria.imagem %}
+                        <img src="{{ categoria.imagem.url }}"
+                             alt="{{ categoria.nome }}">
+                    {% else %}
+                        <div class="category-placeholder">
+                            <i class="bi bi-egg-fried"></i>
+                        </div>
+                    {% endif %}
+
+                    <h3>{{ categoria.nome }}</h3>
+
+                </a>
+            {% empty %}
+                <p class="empty-message">
+                    Nenhuma categoria cadastrada.
+                </p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- RECEITAS RECENTES -->
+<section class="recipes-section">
+    <div class="container">
+
+        <div class="section-header">
+            <div>
+                <span class="section-label">INSPIRAÇÃO PARA VOCÊ</span>
+                <h2>Receitas recentes</h2>
+            </div>
+        </div>
+
+        <div class="recipes-grid">
+
+            {% for receita in receitas %}
+                <article class="recipe-card">
+
+                    <div class="recipe-image">
+
+                        {% if receita.imagem %}
+                            <img src="{{ receita.imagem.url }}"
+                                 alt="{{ receita.nome }}">
+                        {% else %}
+                            <div class="recipe-placeholder">
+                                <i class="bi bi-image"></i>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="recipe-info">
+
+                        <span class="recipe-category">
+                            {{ receita.categoria.nome }}
+                        </span>
+
+                        <h3>{{ receita.nome }}</h3>
+
+                        <p>{{ receita.descricao|truncatechars:100 }}</p>
+
+                        <div class="recipe-meta">
+                            <span>
+                                <i class="bi bi-clock"></i>
+                                {{ receita.tempo_preparo }} min
+                            </span>
+
+                            <span>
+                                <i class="bi bi-people"></i>
+                                {{ receita.rendimento }} porções
+                            </span>
+                        </div>
+
+                    </div>
+
+                </article>
+            {% empty %}
+                <p class="empty-message">
+                    Nenhuma receita cadastrada.
+                </p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

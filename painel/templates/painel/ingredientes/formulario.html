@@ -1,0 +1,64 @@
+
+{% extends 'painel/base.html' %}
+
+{% block content %}
+
+{% block title %}Adicionar Ingrediente | Receitas{% endblock %}
+
+
+<div class="page-header">
+    <div>
+        <h1>{{ titulo }}</h1>
+        <p>Preencha as informações do ingrediente.</p>
+    </div>
+
+    <a href="{% url 'painel:lista_ingredientes' %}"
+       class="btn btn-outline-dark">
+        <i class="bi bi-arrow-left"></i>
+        Voltar
+    </a>
+</div>
+
+<div class="content-card">
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                Verifique os campos preenchidos.
+                {{ form.errors }}
+            </div>
+        {% endif %}
+
+        <div class="row g-3">
+
+            <div class="col-md-8">
+                <label class="form-label">Nome do ingrediente</label>
+
+                {{ form.nome }}
+
+                {{ form.nome.errors }}
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+
+            <a href="{% url 'painel:lista_ingredientes' %}"
+               class="btn btn-outline-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-dark">
+                <i class="bi bi-check-lg"></i>
+                Salvar ingrediente
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}
