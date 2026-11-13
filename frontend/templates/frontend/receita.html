@@ -82,7 +82,6 @@
             <aside class="recipe-ingredients">
 
                 <div class="recipe-section-heading">
-                    <span>O QUE VOCÊ VAI PRECISAR</span>
                     <h2>Ingredientes</h2>
                 </div>
 
@@ -120,8 +119,8 @@
                 </div>
 
                 <div class="preparation-text">
-                    {{ receita.modo_preparo|linebreaks }}
-                </div>
+    {{ modo_preparo_html|safe }}
+</div>
 
             </div>
 

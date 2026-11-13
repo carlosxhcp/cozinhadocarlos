@@ -1,5 +1,7 @@
 {% extends 'painel/base.html' %}
 
+{% load static %}
+
 {% block title %}{{ titulo }} | Administração{% endblock %}
 
 {% block content %}
@@ -303,6 +305,48 @@ document.addEventListener('DOMContentLoaded', function () {
             row.hidden = true;
         }
 
+    });
+
+});
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    tinymce.init({
+        selector: '#editor-modo-preparo',
+        license_key: 'gpl',
+
+        height: 400,
+        menubar: false,
+
+        plugins: 'lists link',
+
+        toolbar: [
+            'undo redo | blocks | bold italic underline',
+            '| bullist numlist | link | removeformat'
+        ],
+
+        language: 'pt_BR',
+
+        branding: false,
+        promotion: false,
+
+        content_style: `
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 14px;
+                line-height: 1.7;
+                color: #333;
+                padding: 10px;
+            }
+
+            h2, h3 {
+                font-weight: bold;
+            }
+        `
     });
 
 });

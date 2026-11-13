@@ -59,7 +59,7 @@ class ReceitaForm(forms.ModelForm):
 
             'modo_preparo': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 6,
+                'id': 'editor-modo-preparo',
                 'placeholder': 'Descreva o passo a passo...',
             }),
 

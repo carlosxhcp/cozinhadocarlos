@@ -1,4 +1,4 @@
-
+import nh3
 from django.shortcuts import render, get_object_or_404
 
 from receitas.models import Receita
@@ -25,18 +25,31 @@ def home(request):
 
 def detalhe_receita(request, slug):
     receita = get_object_or_404(
-        Receita.objects
-        .filter(status='publicada')
+        Receita.objects.filter(status='publicada')
         .select_related('categoria')
-        .prefetch_related(
-            'ingredientes_utilizados__ingrediente'
-        ),
+        .prefetch_related('ingredientes_utilizados__ingrediente'),
         slug=slug
     )
 
-    context = {
+    modo_preparo_html = nh3.clean(
+        receita.modo_preparo,
+        tags={
+            'p', 'br',
+            'strong', 'b',
+            'em', 'i',
+            'u',
+            'ul', 'ol', 'li',
+            'h2', 'h3',
+            'a',
+        },
+        attributes={
+            'a': {'href', 'title'},
+        },
+        url_schemes={'http', 'https', 'mailto'},
+    )
+
+    return render(request, 'frontend/receita.html', {
         'receita': receita,
         'ingredientes': receita.ingredientes_utilizados.all(),
-    }
-
-    return render(request, 'frontend/receita.html', context)
+        'modo_preparo_html': modo_preparo_html,
+    })
