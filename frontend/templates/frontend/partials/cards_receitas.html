@@ -1,0 +1,52 @@
+{% for receita in receitas %}
+    <article class="recipe-card">
+
+        <div class="recipe-image">
+            {% if receita.imagem %}
+                <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
+            {% else %}
+                <div class="recipe-placeholder">
+                    <i class="bi bi-image"></i>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="recipe-info">
+
+            <span class="recipe-category">
+                {{ receita.categoria.nome }}
+            </span>
+
+            <h3>
+                <a href="{% url 'detalhe_receita' receita.slug %}">
+                    {{ receita.nome }}
+                </a>
+            </h3>
+
+            <p>{{ receita.descricao|truncatechars:100 }}</p>
+
+            <div class="recipe-meta">
+                <span>
+                    <i class="bi bi-clock"></i>
+                    {{ receita.tempo_preparo }} min
+                </span>
+
+                <span>
+                    <i class="bi bi-people"></i>
+                    {{ receita.rendimento }} porções
+                </span>
+            </div>
+
+        </div>
+
+    </article>
+
+{% empty %}
+    <div class="empty-message">
+        <div class="empty-icon">
+            <i class="bi bi-emoji-frown"></i>
+        </div>
+        <h3>Nenhuma receita encontrada</h3>
+        <p>Tente outro nome ou remova alguns ingredientes da seleção.</p>
+    </div>
+{% endfor %}

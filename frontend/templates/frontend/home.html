@@ -1,4 +1,3 @@
-
 {% extends 'frontend/base.html' %}
 {% load static %}
 
@@ -10,33 +9,92 @@
 
 {% block content %}
 
-<!-- BANNER PRINCIPAL -->
-<section class="hero">
+<!-- BUSCA + RESULTADOS -->
+<section class="discover" id="recipes-section">
     <div class="container">
-        <div class="hero-content">
 
-            <div class="hero-text">
-                <span class="hero-label">DESCUBRA NOVOS SABORES</span>
+        <div class="discover-search">
 
-                <h1>
-                    Encontre sua próxima
-                    <span>receita favorita.</span>
-                </h1>
+            <h1>Pesquise por uma receita.</h1>
 
-                <p>
-                    Explore receitas deliciosas, descubra novos ingredientes
-                    e encontre inspiração para preparar algo especial.
-                </p>
+            <div class="search-mode">
+                <div class="search-mode-options">
 
-                <form class="hero-search" method="GET" action="#">
-                    <i class="bi bi-search"></i>
-                    <input type="text" name="q"
-                           placeholder="O que você deseja preparar?">
-                    <button type="submit">Pesquisar</button>
-                </form>
+                    <button type="button" class="search-mode-button active" data-mode="receita">
+                        <i class="bi bi-search"></i>
+                        Pesquisar por receita
+                    </button>
+
+                    <button type="button" class="search-mode-button" data-mode="ingrediente">
+                        <i class="bi bi-egg-fried"></i>
+                        Pesquisar por ingrediente
+                    </button>
+
+                </div>
+
+                <!-- PESQUISA POR RECEITA -->
+                <div class="search-panel active" id="search-recipe-panel">
+
+                    <form class="hero-search" id="search-form" data-url="{% url 'buscar_receitas' %}">
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" id="search-input" name="q" placeholder="O que você deseja preparar?"
+                            autocomplete="off">
+
+                        <button type="submit">Pesquisar</button>
+                    </form>
+
+                </div>
+
+                <!-- PESQUISA POR INGREDIENTE -->
+                <div class="search-panel" id="search-ingredient-panel">
+
+                    <div class="ingredient-search" id="ingredient-search"
+                        data-suggestions-url="{% url 'buscar_ingredientes' %}">
+
+                        <div class="ingredient-input-wrapper">
+
+                            <input type="text" id="ingredient-input" placeholder="Digite o nome de um ingrediente..."
+                                autocomplete="off">
+
+                            <div id="ingredient-suggestions" class="ingredient-suggestions" hidden></div>
+
+                        </div>
+
+                        <div id="selected-ingredients" class="selected-ingredients"></div>
+
+                        <div class="ingredient-search-actions">
+
+                            <button type="button" id="search-ingredients">
+                                Pesquisar receitas
+                            </button>
+
+                            <button type="button" id="clear-ingredients">
+                                Limpar seleção
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="discover-results">
+
+            <div class="section-header">
+                <div>
+                    <h2 id="recipes-title">Resultados da pesquisa</h2>
+                </div>
             </div>
 
+            <!-- vazio no início: o JS preenche -->
+            <div class="recipes-grid" id="recipes-results"></div>
+
         </div>
+
     </div>
 </section>
 
@@ -47,7 +105,6 @@
 
         <div class="section-header">
             <div>
-                <span class="section-label">EXPLORE</span>
                 <h2>Explore por categorias</h2>
             </div>
         </div>
@@ -55,24 +112,27 @@
         <div class="categories-grid">
 
             {% for categoria in categorias %}
-                <a href="#" class="category-card">
 
-                    {% if categoria.imagem %}
-                        <img src="{{ categoria.imagem.url }}"
-                             alt="{{ categoria.nome }}">
-                    {% else %}
-                        <div class="category-placeholder">
-                            <i class="bi bi-egg-fried"></i>
-                        </div>
-                    {% endif %}
+            <a href="#" class="category-card">
 
-                    <h3>{{ categoria.nome }}</h3>
+                {% if categoria.imagem %}
+                <img src="{{ categoria.imagem.url }}" alt="{{ categoria.nome }}">
+                {% else %}
+                <div class="category-placeholder">
+                    <i class="bi bi-egg-fried"></i>
+                </div>
+                {% endif %}
 
-                </a>
+                <h3>{{ categoria.nome }}</h3>
+
+            </a>
+
             {% empty %}
-                <p class="empty-message">
-                    Nenhuma categoria cadastrada.
-                </p>
+
+            <p class="empty-message">
+                Nenhuma categoria cadastrada.
+            </p>
+
             {% endfor %}
 
         </div>
@@ -81,69 +141,319 @@
 </section>
 
 
-<!-- RECEITAS RECENTES -->
-<section class="recipes-section">
-    <div class="container">
 
-        <div class="section-header">
-            <div>
-                <span class="section-label">INSPIRAÇÃO PARA VOCÊ</span>
-                <h2>Receitas recentes</h2>
-            </div>
-        </div>
 
-        <div class="recipes-grid">
+{% endblock %}
 
-            {% for receita in receitas %}
-                <article class="recipe-card">
 
-                    <div class="recipe-image">
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-                        {% if receita.imagem %}
-                            <img src="{{ receita.imagem.url }}"
-                                 alt="{{ receita.nome }}">
-                        {% else %}
-                            <div class="recipe-placeholder">
-                                <i class="bi bi-image"></i>
-                            </div>
-                        {% endif %}
+    // ELEMENTOS
+    const modeButtons = document.querySelectorAll('.search-mode-button');
 
-                    </div>
+    const recipePanel = document.getElementById('search-recipe-panel');
+    const ingredientPanel = document.getElementById('search-ingredient-panel');
 
-                    <div class="recipe-info">
+    const form = document.getElementById('search-form');
+    const input = document.getElementById('search-input');
+    const results = document.getElementById('recipes-results');
+    const recipesTitle = document.getElementById('recipes-title');
 
-                        <span class="recipe-category">
-                            {{ receita.categoria.nome }}
-                        </span>
+    const ingredientSearch = document.getElementById('ingredient-search');
+    const ingredientInput = document.getElementById('ingredient-input');
+    const suggestions = document.getElementById('ingredient-suggestions');
+    const selectedContainer = document.getElementById('selected-ingredients');
 
-                        <h3>{{ receita.nome }}</h3>
+    const searchButton = document.getElementById('search-ingredients');
+    const clearButton = document.getElementById('clear-ingredients');
 
-                        <p>{{ receita.descricao|truncatechars:100 }}</p>
+    if (!form || !input || !results || !ingredientSearch ||
+        !recipePanel || !ingredientPanel) {
+        return;
+    }
 
-                        <div class="recipe-meta">
-                            <span>
-                                <i class="bi bi-clock"></i>
-                                {{ receita.tempo_preparo }} min
-                            </span>
+    let currentMode = 'receita';
+    let searchTimeout;
+    let suggestionTimeout;
+    let suggestionRequest = 0;
+    let searchRequest = 0;
 
-                            <span>
-                                <i class="bi bi-people"></i>
-                                {{ receita.rendimento }} porções
-                            </span>
-                        </div>
+    const selectedIngredients = new Map();
 
-                    </div>
+    // ALTERNAR MODOS
+    modeButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
 
-                </article>
-            {% empty %}
-                <p class="empty-message">
-                    Nenhuma receita cadastrada.
-                </p>
-            {% endfor %}
+            currentMode = button.dataset.mode;
 
-        </div>
+            modeButtons.forEach(function (item) {
+                item.classList.toggle('active', item.dataset.mode === currentMode);
+            });
 
-    </div>
-</section>
+            recipePanel.classList.toggle('active', currentMode === 'receita');
+            ingredientPanel.classList.toggle('active', currentMode === 'ingrediente');
 
+            suggestions.hidden = true;
+
+            // Limpa resultados ao trocar de modalidade
+            searchRequest++;
+            results.innerHTML = '';
+
+            if (currentMode === 'receita') {
+                recipesTitle.textContent = 'Resultados da pesquisa';
+                input.focus();
+            } else {
+                recipesTitle.textContent = 'Resultados por ingredientes';
+                ingredientInput.focus();
+            }
+        });
+    });
+
+    // MOSTRAR INGREDIENTES SELECIONADOS
+    function renderSelectedIngredients() {
+
+        selectedContainer.innerHTML = '';
+
+        selectedIngredients.forEach(function (ingredient, id) {
+
+            const tag = document.createElement('span');
+            tag.className = 'selected-ingredient';
+
+            const name = document.createElement('span');
+            name.textContent = ingredient.nome;
+
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.textContent = '×';
+            remove.setAttribute('aria-label', 'Remover ' + ingredient.nome);
+
+            remove.addEventListener('click', function () {
+                selectedIngredients.delete(id);
+                renderSelectedIngredients();
+
+                if (currentMode === 'ingrediente') {
+                    searchRecipes('ingrediente');
+                }
+            });
+
+            tag.appendChild(name);
+            tag.appendChild(remove);
+            selectedContainer.appendChild(tag);
+        });
+    }
+
+    // ADICIONAR INGREDIENTE
+    function addIngredient(ingredient) {
+
+        const id = String(ingredient.id);
+
+        if (selectedIngredients.has(id)) {
+            return;
+        }
+
+        selectedIngredients.set(id, ingredient);
+
+        renderSelectedIngredients();
+
+        ingredientInput.value = '';
+        suggestions.innerHTML = '';
+        suggestions.hidden = true;
+
+        if (currentMode === 'ingrediente') {
+            searchRecipes('ingrediente');
+        }
+
+        ingredientInput.focus();
+    }
+
+    // PESQUISAR RECEITAS
+    function searchRecipes(mode) {
+
+        const params = new URLSearchParams();
+
+        if (mode === 'receita') {
+
+            const term = input.value.trim();
+
+            if (!term) {
+                searchRequest++;
+                results.innerHTML = '';
+                return;
+            }
+
+            params.set('q', term);
+
+        } else {
+
+            if (selectedIngredients.size === 0) {
+                searchRequest++;
+                results.innerHTML = '';
+                return;
+            }
+
+            selectedIngredients.forEach(function (ingredient) {
+                params.append('ingredientes', ingredient.id);
+            });
+        }
+
+        const requestNumber = ++searchRequest;
+
+        results.style.opacity = '0.5';
+
+        fetch(`${form.dataset.url}?${params.toString()}`)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Erro ao pesquisar receitas.');
+                }
+
+                return response.text();
+            })
+            .then(function (html) {
+
+                if (requestNumber !== searchRequest) {
+                    return;
+                }
+
+                results.innerHTML = html;
+                results.style.opacity = '1';
+            })
+            .catch(function (error) {
+
+                if (requestNumber !== searchRequest) {
+                    return;
+                }
+
+                console.error(error);
+                results.style.opacity = '1';
+            });
+    }
+
+    // PESQUISA DINÂMICA POR RECEITA
+    input.addEventListener('input', function () {
+
+        if (currentMode !== 'receita') {
+            return;
+        }
+
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(function () {
+            searchRecipes('receita');
+        }, 350);
+    });
+
+    // BUSCAR SUGESTÕES DE INGREDIENTES
+    function searchIngredientSuggestions() {
+
+        const term = ingredientInput.value.trim();
+
+        if (term.length < 2) {
+            suggestions.innerHTML = '';
+            suggestions.hidden = true;
+            return;
+        }
+
+        const requestNumber = ++suggestionRequest;
+        const url = ingredientSearch.dataset.suggestionsUrl;
+
+        fetch(`${url}?q=${encodeURIComponent(term)}`)
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error('Erro ao buscar ingredientes.');
+                }
+
+                return response.json();
+            })
+            .then(function (data) {
+
+                if (requestNumber !== suggestionRequest) {
+                    return;
+                }
+
+                suggestions.innerHTML = '';
+
+                const available = data.ingredientes.filter(function (ingredient) {
+                    return !selectedIngredients.has(String(ingredient.id));
+                });
+
+                if (available.length === 0) {
+
+                    const empty = document.createElement('div');
+                    empty.className = 'suggestion-empty';
+                    empty.textContent = 'Nenhum ingrediente encontrado.';
+
+                    suggestions.appendChild(empty);
+
+                } else {
+
+                    available.forEach(function (ingredient) {
+
+                        const option = document.createElement('button');
+                        option.type = 'button';
+                        option.className = 'ingredient-suggestion';
+                        option.textContent = ingredient.nome;
+
+                        option.addEventListener('click', function () {
+                            addIngredient(ingredient);
+                        });
+
+                        suggestions.appendChild(option);
+                    });
+                }
+
+                suggestions.hidden = false;
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
+    }
+
+    // PESQUISA DINÂMICA DE SUGESTÕES
+    ingredientInput.addEventListener('input', function () {
+
+        clearTimeout(suggestionTimeout);
+
+        suggestionTimeout = setTimeout(function () {
+            searchIngredientSuggestions();
+        }, 250);
+    });
+
+    // BOTÃO PESQUISAR INGREDIENTES
+    searchButton.addEventListener('click', function () {
+        searchRecipes('ingrediente');
+    });
+
+    // LIMPAR INGREDIENTES
+    clearButton.addEventListener('click', function () {
+
+        selectedIngredients.clear();
+
+        renderSelectedIngredients();
+
+        ingredientInput.value = '';
+        suggestions.innerHTML = '';
+        suggestions.hidden = true;
+
+        searchRecipes('ingrediente');
+    });
+
+    // FORMULÁRIO DE RECEITA
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        clearTimeout(searchTimeout);
+        searchRecipes('receita');
+    });
+
+    // FECHAR SUGESTÕES AO CLICAR FORA
+    document.addEventListener('click', function (event) {
+        if (!ingredientSearch.contains(event.target)) {
+            suggestions.hidden = true;
+        }
+    });
+
+});
+</script>
 {% endblock %}

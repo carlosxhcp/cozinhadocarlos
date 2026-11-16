@@ -1,27 +1,77 @@
 import nh3
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q, Count
+from django.template.loader import render_to_string
 
 from receitas.models import Receita
 from categorias.models import Categoria
+from ingredientes.models import Ingrediente
 
 
 def home(request):
-    receitas = (
-        Receita.objects
-        .filter(status='publicada')
-        .select_related('categoria')
-        .order_by('-data_criacao')[:8]
-    )
-
     categorias = Categoria.objects.all()
+    ingredientes = Ingrediente.objects.all()
 
-    context = {
-        'receitas': receitas,
+    return render(request, 'frontend/home.html', {
         'categorias': categorias,
-    }
+        'ingredientes': ingredientes,
+    })
 
-    return render(request, 'frontend/home.html', context)
 
+def buscar_ingredientes(request):
+    termo = request.GET.get('q', '').strip()
+
+    ingredientes = []
+
+    if len(termo) >= 2:
+        ingredientes = list(
+            Ingrediente.objects.filter(
+                nome__icontains=termo
+            ).order_by('nome').values('id', 'nome')[:10]
+        )
+
+    return JsonResponse({'ingredientes': ingredientes})
+
+def buscar_receitas(request):
+    termo = request.GET.get('q', '').strip()
+    ingredientes_ids = request.GET.getlist('ingredientes')
+
+    receitas = Receita.objects.filter(
+        status='publicada'
+    ).select_related('categoria')
+
+    if termo:
+        receitas = receitas.filter(
+            Q(nome__icontains=termo) |
+            Q(descricao__icontains=termo) |
+            Q(categoria__nome__icontains=termo) |
+            Q(ingredientes__nome__icontains=termo)
+        )
+
+    if ingredientes_ids:
+        receitas = (
+            receitas
+            .filter(ingredientes__id__in=ingredientes_ids)
+            .annotate(
+                total_ingredientes_selecionados=Count(
+                    'ingredientes',
+                    filter=Q(ingredientes__id__in=ingredientes_ids),
+                    distinct=True
+                )
+            )
+            .filter(
+                total_ingredientes_selecionados=len(set(ingredientes_ids))
+            )
+        )
+
+    receitas = receitas.distinct().order_by('-data_criacao')
+
+    return render(
+        request,
+        'frontend/partials/cards_receitas.html',
+        {'receitas': receitas}
+    )
 
 def detalhe_receita(request, slug):
     receita = get_object_or_404(

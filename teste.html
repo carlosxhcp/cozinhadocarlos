@@ -1,0 +1,89 @@
+<!-- BUSCA + RESULTADOS -->
+<section class="discover" id="recipes-section">
+    <div class="container">
+
+        <div class="discover-search">
+
+            <h1>Pesquise por uma receita.</h1>
+
+            <div class="search-mode">
+                <div class="search-mode-options">
+
+                    <button type="button" class="search-mode-button active" data-mode="receita">
+                        <i class="bi bi-search"></i>
+                        Pesquisar por receita
+                    </button>
+
+                    <button type="button" class="search-mode-button" data-mode="ingrediente">
+                        <i class="bi bi-egg-fried"></i>
+                        Pesquisar por ingrediente
+                    </button>
+
+                </div>
+
+                <!-- PESQUISA POR RECEITA -->
+                <div class="search-panel active" id="search-recipe-panel">
+
+                    <form class="hero-search" id="search-form" data-url="{% url 'buscar_receitas' %}">
+                        <i class="bi bi-search"></i>
+
+                        <input type="text" id="search-input" name="q" placeholder="O que você deseja preparar?"
+                            autocomplete="off">
+
+                        <button type="submit">Pesquisar</button>
+                    </form>
+
+                </div>
+
+                <!-- PESQUISA POR INGREDIENTE -->
+                <div class="search-panel" id="search-ingredient-panel">
+
+                    <div class="ingredient-search" id="ingredient-search"
+                        data-suggestions-url="{% url 'buscar_ingredientes' %}">
+
+                        <div class="ingredient-input-wrapper">
+
+                            <input type="text" id="ingredient-input" placeholder="Digite o nome de um ingrediente..."
+                                autocomplete="off">
+
+                            <div id="ingredient-suggestions" class="ingredient-suggestions" hidden></div>
+
+                        </div>
+
+                        <div id="selected-ingredients" class="selected-ingredients"></div>
+
+                        <div class="ingredient-search-actions">
+
+                            <button type="button" id="search-ingredients">
+                                Pesquisar receitas
+                            </button>
+
+                            <button type="button" id="clear-ingredients">
+                                Limpar seleção
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="discover-results">
+
+            <div class="section-header">
+                <div>
+                    <span class="section-label">RESULTADOS</span>
+                    <h2 id="recipes-title">Resultados da pesquisa</h2>
+                </div>
+            </div>
+
+            <!-- vazio no início: o JS preenche -->
+            <div class="recipes-grid" id="recipes-results"></div>
+
+        </div>
+
+    </div>
+</section>
