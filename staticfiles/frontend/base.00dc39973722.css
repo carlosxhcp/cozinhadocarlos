@@ -1,0 +1,64 @@
+/* ESTILOS GERAIS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #202124;
+}
+
+/* CABEÇALHO */
+
+.site-header {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+}
+
+.site-header .navbar {
+    padding: 20px 0;
+}
+
+.navbar-brand {
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #202124;
+}
+
+.navbar-brand span {
+    color: #d97736;
+}
+
+.navbar-brand:hover {
+    color: #202124;
+}
+
+.nav-link {
+    color: #555;
+    font-size: 14px;
+    margin-left: 25px;
+}
+
+.nav-link:hover {
+    color: #d97736;
+}
+
+/* RODAPÉ */
+
+.site-footer {
+    padding: 30px 0;
+    margin-top: 60px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.site-footer p {
+    margin: 0;
+    color: #888;
+    font-size: 12px;
+}
