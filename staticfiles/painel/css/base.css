@@ -40,9 +40,9 @@
     --warning: #927443;
     --warning-soft: #f5f0e8;
 
-    --radius-sm: 8px;
-    --radius: 12px;
-    --radius-lg: 16px;
+    --radius-sm: 14px;
+    --radius: 20px;
+    --radius-lg: 26px;
     --radius-pill: 999px;
 
     --shadow-sm: 0 1px 2px rgba(11, 18, 32, 0.05);
@@ -846,7 +846,7 @@ img {
     width: 100%;
     min-height: 43px;
 
-    padding: 10px 12px;
+    padding: 10px 120px;
 
     border: 1px solid var(--border-hard);
     border-radius: var(--radius-sm);
@@ -1585,5 +1585,236 @@ textarea:focus-visible {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+}
+
+
+
+/* ========================================
+   ELEMENTOS MAIS ARREDONDADOS
+======================================== */
+
+
+.sidebar-brand-icon,
+.brand-icon,
+.user-avatar,
+.stat-icon {
+    border-radius: 18px;
+}
+
+.sidebar-link {
+    border-radius: 14px;
+    margin: 3px 10px;
+}
+
+.topbar {
+    border-radius: 0 0 22px 22px;
+}
+
+.status-indicator {
+    border-radius: 999px;
+}
+
+.stat-card,
+.content-card,
+.form-card,
+.delete-card,
+.login-card {
+    border-radius: 24px;
+}
+
+.stat-card {
+    padding: 26px;
+}
+
+.content-card,
+.form-card {
+    padding: 26px;
+}
+
+.btn,
+button,
+.btn-primary-custom,
+.btn-secondary-custom,
+.btn-danger-custom,
+.search-button,
+.login-button,
+.action-button {
+    border-radius: 14px;
+}
+
+.form-control,
+.form-select,
+.search-form .form-control,
+.ts-control {
+    border-radius: 14px !important;
+}
+
+.ts-dropdown {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.ts-dropdown .option {
+    border-radius: 9px;
+    margin: 3px 5px;
+}
+
+.custom-table {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.custom-table th:first-child {
+    border-top-left-radius: 16px;
+}
+
+.custom-table th:last-child {
+    border-top-right-radius: 16px;
+}
+
+.current-image img {
+    border-radius: 18px;
+}
+
+.btn-remove-ingredient {
+    border-radius: 12px;
+}
+
+.ingredient-row {
+    border-radius: 18px;
+}
+
+.delete-warning {
+    border-radius: 16px;
+}
+
+.alert {
+    border-radius: 16px;
+}
+
+
+/* ========================================
+   CAMPO PERSONALIZADO DE IMAGEM
+======================================== */
+
+.image-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 14px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    min-height: 145px;
+}
+
+.image-preview {
+    width: 125px;
+    height: 115px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: imageFadeIn .25s ease;
+}
+
+.image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-mute);
+    font-size: 12px;
+}
+
+.image-placeholder i {
+    font-size: 30px;
+}
+
+.image-upload-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+}
+
+.image-input {
+    display: none;
+}
+
+.image-select-button,
+.image-remove-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.image-select-button {
+    background: var(--bg);
+    color: #fff;
+}
+
+.image-select-button:hover {
+    background: var(--sidebar-muted);
+}
+
+.image-remove-button {
+    background: #fff0f0;
+    color: #c0392b;
+    border: 1px solid #f2cccc;
+}
+
+.image-remove-button:hover {
+    background: #ffe0e0;
+}
+
+.image-file-name {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--text-soft);
+    font-size: 12px;
+}
+
+@keyframes imageFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(.96);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 600px) {
+    .image-upload-container {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .image-upload-controls {
+        width: 100%;
     }
 }

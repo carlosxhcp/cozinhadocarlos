@@ -1,21 +1,20 @@
 
 {% extends 'painel/base.html' %}
 
+{% block title %}Ingredientes | Receitas{% endblock %}
+
+
 {% block content %}
 
-{% block title %}Ingredientes | Receitas{% endblock %}
 
 
 <div class="page-header">
     <div>
-        <h1>Ingredientes</h1>
-        <p>Gerencie os ingredientes utilizados nas receitas.</p>
-    </div>
-
-    <a href="{% url 'painel:criar_ingrediente' %}" class="btn btn-dark">
+        <a href="{% url 'painel:criar_ingrediente' %}" class="btn btn-dark">
         <i class="bi bi-plus-lg"></i>
         Novo ingrediente
     </a>
+    </div>
 </div>
 
 <div class="content-card">

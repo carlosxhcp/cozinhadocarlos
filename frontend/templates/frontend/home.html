@@ -148,312 +148,315 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    // ELEMENTOS
-    const modeButtons = document.querySelectorAll('.search-mode-button');
+        // ELEMENTOS
+        const modeButtons = document.querySelectorAll('.search-mode-button');
 
-    const recipePanel = document.getElementById('search-recipe-panel');
-    const ingredientPanel = document.getElementById('search-ingredient-panel');
+        const recipePanel = document.getElementById('search-recipe-panel');
+        const ingredientPanel = document.getElementById('search-ingredient-panel');
 
-    const form = document.getElementById('search-form');
-    const input = document.getElementById('search-input');
-    const results = document.getElementById('recipes-results');
-    const recipesTitle = document.getElementById('recipes-title');
+        const form = document.getElementById('search-form');
+        const input = document.getElementById('search-input');
+        const results = document.getElementById('recipes-results');
+        const recipesTitle = document.getElementById('recipes-title');
 
-    const ingredientSearch = document.getElementById('ingredient-search');
-    const ingredientInput = document.getElementById('ingredient-input');
-    const suggestions = document.getElementById('ingredient-suggestions');
-    const selectedContainer = document.getElementById('selected-ingredients');
+        const ingredientSearch = document.getElementById('ingredient-search');
+        const ingredientInput = document.getElementById('ingredient-input');
+        const suggestions = document.getElementById('ingredient-suggestions');
+        const selectedContainer = document.getElementById('selected-ingredients');
 
-    const searchButton = document.getElementById('search-ingredients');
-    const clearButton = document.getElementById('clear-ingredients');
+        const searchButton = document.getElementById('search-ingredients');
+        const clearButton = document.getElementById('clear-ingredients');
 
-    if (!form || !input || !results || !ingredientSearch ||
-        !recipePanel || !ingredientPanel) {
-        return;
-    }
-
-    let currentMode = 'receita';
-    let searchTimeout;
-    let suggestionTimeout;
-    let suggestionRequest = 0;
-    let searchRequest = 0;
-
-    const selectedIngredients = new Map();
-
-    // ALTERNAR MODOS
-    modeButtons.forEach(function (button) {
-        button.addEventListener('click', function () {
-
-            currentMode = button.dataset.mode;
-
-            modeButtons.forEach(function (item) {
-                item.classList.toggle('active', item.dataset.mode === currentMode);
-            });
-
-            recipePanel.classList.toggle('active', currentMode === 'receita');
-            ingredientPanel.classList.toggle('active', currentMode === 'ingrediente');
-
-            suggestions.hidden = true;
-
-            // Limpa resultados ao trocar de modalidade
-            searchRequest++;
-            results.innerHTML = '';
-
-            if (currentMode === 'receita') {
-                recipesTitle.textContent = 'Resultados da pesquisa';
-                input.focus();
-            } else {
-                recipesTitle.textContent = 'Resultados por ingredientes';
-                ingredientInput.focus();
-            }
-        });
-    });
-
-    // MOSTRAR INGREDIENTES SELECIONADOS
-    function renderSelectedIngredients() {
-
-        selectedContainer.innerHTML = '';
-
-        selectedIngredients.forEach(function (ingredient, id) {
-
-            const tag = document.createElement('span');
-            tag.className = 'selected-ingredient';
-
-            const name = document.createElement('span');
-            name.textContent = ingredient.nome;
-
-            const remove = document.createElement('button');
-            remove.type = 'button';
-            remove.textContent = '×';
-            remove.setAttribute('aria-label', 'Remover ' + ingredient.nome);
-
-            remove.addEventListener('click', function () {
-                selectedIngredients.delete(id);
-                renderSelectedIngredients();
-
-                if (currentMode === 'ingrediente') {
-                    searchRecipes('ingrediente');
-                }
-            });
-
-            tag.appendChild(name);
-            tag.appendChild(remove);
-            selectedContainer.appendChild(tag);
-        });
-    }
-
-    // ADICIONAR INGREDIENTE
-    function addIngredient(ingredient) {
-
-        const id = String(ingredient.id);
-
-        if (selectedIngredients.has(id)) {
+        if (!form || !input || !results || !ingredientSearch ||
+            !recipePanel || !ingredientPanel) {
             return;
         }
 
-        selectedIngredients.set(id, ingredient);
+        let currentMode = 'receita';
+        let searchTimeout;
+        let suggestionTimeout;
+        let suggestionRequest = 0;
+        let searchRequest = 0;
 
-        renderSelectedIngredients();
+        const selectedIngredients = new Map();
 
-        ingredientInput.value = '';
-        suggestions.innerHTML = '';
-        suggestions.hidden = true;
+        // ALTERNAR MODOS
+        modeButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
 
-        if (currentMode === 'ingrediente') {
-            searchRecipes('ingrediente');
-        }
+                currentMode = button.dataset.mode;
 
-        ingredientInput.focus();
-    }
-
-    // PESQUISAR RECEITAS
-    function searchRecipes(mode) {
-
-        const params = new URLSearchParams();
-
-        if (mode === 'receita') {
-
-            const term = input.value.trim();
-
-            if (!term) {
-                searchRequest++;
-                results.innerHTML = '';
-                return;
-            }
-
-            params.set('q', term);
-
-        } else {
-
-            if (selectedIngredients.size === 0) {
-                searchRequest++;
-                results.innerHTML = '';
-                return;
-            }
-
-            selectedIngredients.forEach(function (ingredient) {
-                params.append('ingredientes', ingredient.id);
-            });
-        }
-
-        const requestNumber = ++searchRequest;
-
-        results.style.opacity = '0.5';
-
-        fetch(`${form.dataset.url}?${params.toString()}`)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Erro ao pesquisar receitas.');
-                }
-
-                return response.text();
-            })
-            .then(function (html) {
-
-                if (requestNumber !== searchRequest) {
-                    return;
-                }
-
-                results.innerHTML = html;
-                results.style.opacity = '1';
-            })
-            .catch(function (error) {
-
-                if (requestNumber !== searchRequest) {
-                    return;
-                }
-
-                console.error(error);
-                results.style.opacity = '1';
-            });
-    }
-
-    // PESQUISA DINÂMICA POR RECEITA
-    input.addEventListener('input', function () {
-
-        if (currentMode !== 'receita') {
-            return;
-        }
-
-        clearTimeout(searchTimeout);
-
-        searchTimeout = setTimeout(function () {
-            searchRecipes('receita');
-        }, 350);
-    });
-
-    // BUSCAR SUGESTÕES DE INGREDIENTES
-    function searchIngredientSuggestions() {
-
-        const term = ingredientInput.value.trim();
-
-        if (term.length < 2) {
-            suggestions.innerHTML = '';
-            suggestions.hidden = true;
-            return;
-        }
-
-        const requestNumber = ++suggestionRequest;
-        const url = ingredientSearch.dataset.suggestionsUrl;
-
-        fetch(`${url}?q=${encodeURIComponent(term)}`)
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error('Erro ao buscar ingredientes.');
-                }
-
-                return response.json();
-            })
-            .then(function (data) {
-
-                if (requestNumber !== suggestionRequest) {
-                    return;
-                }
-
-                suggestions.innerHTML = '';
-
-                const available = data.ingredientes.filter(function (ingredient) {
-                    return !selectedIngredients.has(String(ingredient.id));
+                modeButtons.forEach(function (item) {
+                    item.classList.toggle(
+                        'active',
+                        item.dataset.mode === currentMode
+                    );
                 });
 
-                if (available.length === 0) {
+                recipePanel.classList.toggle('active', currentMode === 'receita');
+                ingredientPanel.classList.toggle('active', currentMode === 'ingrediente');
 
-                    const empty = document.createElement('div');
-                    empty.className = 'suggestion-empty';
-                    empty.textContent = 'Nenhum ingrediente encontrado.';
+                suggestions.hidden = true;
 
-                    suggestions.appendChild(empty);
+                // Limpa resultados ao trocar de modalidade
+                searchRequest++;
+                results.innerHTML = '';
 
+                if (currentMode === 'receita') {
+                    recipesTitle.textContent = 'Resultados da pesquisa';
                 } else {
-
-                    available.forEach(function (ingredient) {
-
-                        const option = document.createElement('button');
-                        option.type = 'button';
-                        option.className = 'ingredient-suggestion';
-                        option.textContent = ingredient.nome;
-
-                        option.addEventListener('click', function () {
-                            addIngredient(ingredient);
-                        });
-
-                        suggestions.appendChild(option);
-                    });
+                    recipesTitle.textContent = 'Resultados por ingredientes';
                 }
 
-                suggestions.hidden = false;
-            })
-            .catch(function (error) {
-                console.error(error);
+                // Não utilizar focus() aqui.
+                // O teclado só deve abrir quando o usuário tocar no campo.
             });
-    }
+        });
+        // MOSTRAR INGREDIENTES SELECIONADOS
+        function renderSelectedIngredients() {
 
-    // PESQUISA DINÂMICA DE SUGESTÕES
-    ingredientInput.addEventListener('input', function () {
+            selectedContainer.innerHTML = '';
 
-        clearTimeout(suggestionTimeout);
+            selectedIngredients.forEach(function (ingredient, id) {
 
-        suggestionTimeout = setTimeout(function () {
-            searchIngredientSuggestions();
-        }, 250);
-    });
+                const tag = document.createElement('span');
+                tag.className = 'selected-ingredient';
 
-    // BOTÃO PESQUISAR INGREDIENTES
-    searchButton.addEventListener('click', function () {
-        searchRecipes('ingrediente');
-    });
+                const name = document.createElement('span');
+                name.textContent = ingredient.nome;
 
-    // LIMPAR INGREDIENTES
-    clearButton.addEventListener('click', function () {
+                const remove = document.createElement('button');
+                remove.type = 'button';
+                remove.textContent = '×';
+                remove.setAttribute('aria-label', 'Remover ' + ingredient.nome);
 
-        selectedIngredients.clear();
+                remove.addEventListener('click', function () {
+                    selectedIngredients.delete(id);
+                    renderSelectedIngredients();
 
-        renderSelectedIngredients();
+                    if (currentMode === 'ingrediente') {
+                        searchRecipes('ingrediente');
+                    }
+                });
 
-        ingredientInput.value = '';
-        suggestions.innerHTML = '';
-        suggestions.hidden = true;
-
-        searchRecipes('ingrediente');
-    });
-
-    // FORMULÁRIO DE RECEITA
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        clearTimeout(searchTimeout);
-        searchRecipes('receita');
-    });
-
-    // FECHAR SUGESTÕES AO CLICAR FORA
-    document.addEventListener('click', function (event) {
-        if (!ingredientSearch.contains(event.target)) {
-            suggestions.hidden = true;
+                tag.appendChild(name);
+                tag.appendChild(remove);
+                selectedContainer.appendChild(tag);
+            });
         }
-    });
 
-});
+        // ADICIONAR INGREDIENTE
+        function addIngredient(ingredient) {
+
+            const id = String(ingredient.id);
+
+            if (selectedIngredients.has(id)) {
+                return;
+            }
+
+            selectedIngredients.set(id, ingredient);
+
+            renderSelectedIngredients();
+
+            ingredientInput.value = '';
+            suggestions.innerHTML = '';
+            suggestions.hidden = true;
+
+            if (currentMode === 'ingrediente') {
+                searchRecipes('ingrediente');
+            }
+
+            ingredientInput.focus();
+        }
+
+        // PESQUISAR RECEITAS
+        function searchRecipes(mode) {
+
+            const params = new URLSearchParams();
+
+            if (mode === 'receita') {
+
+                const term = input.value.trim();
+
+                if (!term) {
+                    searchRequest++;
+                    results.innerHTML = '';
+                    return;
+                }
+
+                params.set('q', term);
+
+            } else {
+
+                if (selectedIngredients.size === 0) {
+                    searchRequest++;
+                    results.innerHTML = '';
+                    return;
+                }
+
+                selectedIngredients.forEach(function (ingredient) {
+                    params.append('ingredientes', ingredient.id);
+                });
+            }
+
+            const requestNumber = ++searchRequest;
+
+            results.style.opacity = '0.5';
+
+            fetch(`${form.dataset.url}?${params.toString()}`)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Erro ao pesquisar receitas.');
+                    }
+
+                    return response.text();
+                })
+                .then(function (html) {
+
+                    if (requestNumber !== searchRequest) {
+                        return;
+                    }
+
+                    results.innerHTML = html;
+                    results.style.opacity = '1';
+                })
+                .catch(function (error) {
+
+                    if (requestNumber !== searchRequest) {
+                        return;
+                    }
+
+                    console.error(error);
+                    results.style.opacity = '1';
+                });
+        }
+
+        // PESQUISA DINÂMICA POR RECEITA
+        input.addEventListener('input', function () {
+
+            if (currentMode !== 'receita') {
+                return;
+            }
+
+            clearTimeout(searchTimeout);
+
+            searchTimeout = setTimeout(function () {
+                searchRecipes('receita');
+            }, 350);
+        });
+
+        // BUSCAR SUGESTÕES DE INGREDIENTES
+        function searchIngredientSuggestions() {
+
+            const term = ingredientInput.value.trim();
+
+            if (term.length < 2) {
+                suggestions.innerHTML = '';
+                suggestions.hidden = true;
+                return;
+            }
+
+            const requestNumber = ++suggestionRequest;
+            const url = ingredientSearch.dataset.suggestionsUrl;
+
+            fetch(`${url}?q=${encodeURIComponent(term)}`)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar ingredientes.');
+                    }
+
+                    return response.json();
+                })
+                .then(function (data) {
+
+                    if (requestNumber !== suggestionRequest) {
+                        return;
+                    }
+
+                    suggestions.innerHTML = '';
+
+                    const available = data.ingredientes.filter(function (ingredient) {
+                        return !selectedIngredients.has(String(ingredient.id));
+                    });
+
+                    if (available.length === 0) {
+
+                        const empty = document.createElement('div');
+                        empty.className = 'suggestion-empty';
+                        empty.textContent = 'Nenhum ingrediente encontrado.';
+
+                        suggestions.appendChild(empty);
+
+                    } else {
+
+                        available.forEach(function (ingredient) {
+
+                            const option = document.createElement('button');
+                            option.type = 'button';
+                            option.className = 'ingredient-suggestion';
+                            option.textContent = ingredient.nome;
+
+                            option.addEventListener('click', function () {
+                                addIngredient(ingredient);
+                            });
+
+                            suggestions.appendChild(option);
+                        });
+                    }
+
+                    suggestions.hidden = false;
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        }
+
+        // PESQUISA DINÂMICA DE SUGESTÕES
+        ingredientInput.addEventListener('input', function () {
+
+            clearTimeout(suggestionTimeout);
+
+            suggestionTimeout = setTimeout(function () {
+                searchIngredientSuggestions();
+            }, 250);
+        });
+
+        // BOTÃO PESQUISAR INGREDIENTES
+        searchButton.addEventListener('click', function () {
+            searchRecipes('ingrediente');
+        });
+
+        // LIMPAR INGREDIENTES
+        clearButton.addEventListener('click', function () {
+
+            selectedIngredients.clear();
+
+            renderSelectedIngredients();
+
+            ingredientInput.value = '';
+            suggestions.innerHTML = '';
+            suggestions.hidden = true;
+
+            searchRecipes('ingrediente');
+        });
+
+        // FORMULÁRIO DE RECEITA
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            clearTimeout(searchTimeout);
+            searchRecipes('receita');
+        });
+
+        // FECHAR SUGESTÕES AO CLICAR FORA
+        document.addEventListener('click', function (event) {
+            if (!ingredientSearch.contains(event.target)) {
+                suggestions.hidden = true;
+            }
+        });
+
+    });
 </script>
 {% endblock %}

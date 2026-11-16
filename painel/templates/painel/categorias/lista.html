@@ -1,21 +1,21 @@
 
 {% extends 'painel/base.html' %}
 
+{% block title %}Categorias | Receitas{% endblock %}
+
 {% block content %}
 
-{% block title %}Categorias | Receitas{% endblock %}
 
 
 <div class="page-header">
     <div>
-        <h1>Categorias</h1>
-        <p>Gerencie as categorias das suas receitas.</p>
-    </div>
-
-    <a href="{% url 'painel:criar_categoria' %}" class="btn btn-dark">
+        <a href="{% url 'painel:criar_categoria' %}" class="btn btn-dark">
         <i class="bi bi-plus-lg"></i>
         Nova categoria
     </a>
+    </div>
+
+    
 </div>
 
 <div class="content-card">
