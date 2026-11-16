@@ -1,0 +1,290 @@
+/* ESTILOS GERAIS */
+
+:root {
+    --cor-marca: #d97736;
+    --cor-marca-escura: #c1672b;
+    --cor-texto: #202124;
+    --cor-texto-suave: #555;
+    --cor-borda: #eee;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: var(--cor-texto);
+}
+
+/* CABEÇALHO */
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--cor-borda);
+    transition: box-shadow 0.25s ease;
+}
+
+.site-header.scrolled {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.site-header .navbar {
+    padding: 16px 0;
+}
+
+.navbar-brand {
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: var(--cor-texto);
+}
+
+.navbar-brand span {
+    color: var(--cor-marca);
+}
+
+.navbar-brand:hover {
+    color: var(--cor-texto);
+}
+
+/* LINKS DO MENU */
+
+.site-header .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--cor-texto-suave);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 4px;
+    margin: 0 14px;
+    transition: color 0.2s ease;
+}
+
+.site-header .nav-link i {
+    font-size: 15px;
+}
+
+.site-header .nav-link:hover,
+.site-header .nav-link.show {
+    color: var(--cor-marca);
+}
+
+/* Sublinhado animado (desktop) */
+.site-header .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 0;
+    height: 2px;
+    background: var(--cor-marca);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+}
+
+.site-header .nav-link:hover::after,
+.site-header .nav-link.active::after {
+    transform: scaleX(1);
+}
+
+.site-header .nav-link.active {
+    color: var(--cor-marca);
+    font-weight: 700;
+}
+
+/* A setinha do dropdown já cumpre o papel visual: sem sublinhado nela */
+.site-header .dropdown-toggle::after {
+    position: static;
+    height: auto;
+    background: none;
+    transform: none;
+    border-top: 0.3em solid;
+    border-right: 0.3em solid transparent;
+    border-left: 0.3em solid transparent;
+    margin-left: 2px;
+}
+
+/* DROPDOWN */
+
+.site-header .dropdown-menu {
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 12px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    min-width: 220px;
+}
+
+.site-header .dropdown-item {
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+    border-radius: 8px;
+    padding: 9px 12px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.site-header .dropdown-item:hover,
+.site-header .dropdown-item:focus {
+    background: #fdf1e8;
+    color: var(--cor-marca);
+}
+
+/* BUSCA + BOTÃO */
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.nav-search i {
+    position: absolute;
+    left: 14px;
+    font-size: 13px;
+    color: #999;
+    pointer-events: none;
+}
+
+.nav-search input {
+    width: 190px;
+    height: 40px;
+    padding: 0 14px 0 36px;
+    font-size: 13px;
+    color: var(--cor-texto);
+    background: #f6f6f6;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    outline: none;
+    transition: width 0.25s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.nav-search input:focus {
+    width: 240px;
+    background: #fff;
+    border-color: var(--cor-marca);
+}
+
+.btn-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--cor-marca);
+    border: none;
+    border-radius: 50px;
+    white-space: nowrap;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.btn-brand:hover {
+    color: #fff;
+    background: var(--cor-marca-escura);
+    transform: translateY(-1px);
+}
+
+/* BOTÃO HAMBÚRGUER */
+
+.navbar-toggler {
+    border: none;
+    padding: 4px 8px;
+    font-size: 30px;
+    line-height: 1;
+    color: var(--cor-texto);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 3px rgba(217, 119, 54, 0.25);
+}
+
+/* MENU MOBILE (offcanvas) */
+
+@media (max-width: 991.98px) {
+
+    .offcanvas {
+        max-width: 300px;
+    }
+
+    .offcanvas-header {
+        border-bottom: 1px solid var(--cor-borda);
+        padding: 18px 20px;
+    }
+
+    .offcanvas-body {
+        padding: 12px 20px 24px;
+    }
+
+    .site-header .nav-link {
+        margin: 0;
+        padding: 14px 0;
+        font-size: 16px;
+        border-bottom: 1px solid #f3f3f3;
+    }
+
+    .site-header .nav-link::after {
+        display: none;
+    }
+
+    .site-header .dropdown-toggle::after {
+        margin-left: auto;
+    }
+
+    .site-header .dropdown-menu {
+        border: none;
+        box-shadow: none;
+        margin-top: 0;
+        padding: 4px 0 8px 14px;
+    }
+
+    .nav-actions {
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 24px;
+    }
+
+    .nav-search input,
+    .nav-search input:focus {
+        width: 100%;
+    }
+
+    .btn-brand {
+        justify-content: center;
+    }
+}
+
+/* RODAPÉ */
+
+.site-footer {
+    padding: 30px 0;
+    margin-top: 60px;
+    border-top: 1px solid var(--cor-borda);
+    text-align: center;
+}
+
+.site-footer p {
+    margin: 0;
+    color: #888;
+    font-size: 12px;
+}

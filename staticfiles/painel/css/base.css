@@ -376,7 +376,7 @@ img {
 .topbar h6 {
     margin: 0 0 4px;
     color: var(--text);
-    font-size: 13px;
+    font-size: 20px;
     font-weight: 700;
 }
 
@@ -846,7 +846,7 @@ img {
     width: 100%;
     min-height: 43px;
 
-    padding: 10px 120px;
+    padding: 10px 12px;
 
     border: 1px solid var(--border-hard);
     border-radius: var(--radius-sm);
@@ -1818,3 +1818,4 @@ button,
         width: 100%;
     }
 }
+

@@ -12,60 +12,103 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <link rel="stylesheet" href="{% static 'frontend/base.css' %}">
+    <link rel="stylesheet" href="{% static 'frontend/footer.css' %}">
+
 
     {% block extra_css %}{% endblock %}
 </head>
 <body>
 
     <header class="site-header">
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
 
-                <a class="navbar-brand" href="{% url 'home' %}">
-                    RECEITAS<span>.</span>
-                </a>
+            <!-- MARCA / LOGO -->
+            <a class="navbar-brand" href="{% url 'home' %}">
 
-                <button class="navbar-toggler" type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#menuPrincipal">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <span class="brand-logo">
+                    <i class="bi bi-egg-fried"></i>
+                </span>
 
-                <div class="collapse navbar-collapse" id="menuPrincipal">
-                    <ul class="navbar-nav ms-auto align-items-lg-center">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'home' %}">
-                                Início
-                            </a>
-                        </li>
+                <span class="brand-name">
+                    
+                </span>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                Receitas
-                            </a>
-                        </li>
+            </a>
 
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">
-                                Categorias
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+            <!-- BOTÃO MOBILE -->
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#menuPrincipal"
+                    aria-controls="menuPrincipal"
+                    aria-expanded="false"
+                    aria-label="Abrir menu">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <!-- MENU -->
+            <div class="collapse navbar-collapse" id="menuPrincipal">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center">
+
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">
+                            Início
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Receitas
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            Categorias
+                        </a>
+                    </li>
+
+                </ul>
 
             </div>
-        </nav>
-    </header>
+
+        </div>
+    </nav>
+</header>
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>© {% now "Y" %} Receitas. Todos os direitos reservados.</p>
+    
+<footer class="site-footer">
+    <div class="container footer-content">
+
+        <a href="{% url 'home' %}" class="footer-brand">
+            Cozb
+        </a>
+
+        <span class="footer-copy">
+            © {% now "Y" %} Receitas. Todos os direitos reservados.
+        </span>
+
+        <div class="footer-social">
+            <a href="#" target="_blank" aria-label="YouTube">
+                <i class="bi bi-youtube"></i>
+            </a>
+            <a href="#" target="_blank" aria-label="Instagram">
+                <i class="bi bi-instagram"></i>
+            </a>
+            <a href="#" target="_blank" aria-label="TikTok">
+                <i class="bi bi-tiktok"></i>
+            </a>
         </div>
-    </footer>
+
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 

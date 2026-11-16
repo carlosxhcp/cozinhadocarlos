@@ -12,53 +12,194 @@ body {
     color: #202124;
 }
 
-/* CABEÇALHO */
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
 
 .site-header {
-    background: #fff;
-    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
 .site-header .navbar {
-    padding: 20px 0;
+    min-height: 82px;
+    padding: 12px 0;
 }
+
+/* MARCA */
 
 .navbar-brand {
-    font-size: 23px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    color: #202124;
-}
-
-.navbar-brand span {
-    color: #d97736;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
 }
 
 .navbar-brand:hover {
-    color: #202124;
+    color: var(--text);
+    opacity: 0.8;
 }
 
-.nav-link {
-    color: #555;
-    font-size: 14px;
-    margin-left: 25px;
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--surface-alt);
+    color: var(--accent);
+    font-size: 23px;
 }
 
-.nav-link:hover {
-    color: #d97736;
+/* Espaço reservado para a imagem da logo.
+   Quando tiver o arquivo, poderá colocar um <img> aqui. */
+
+.brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
-/* RODAPÉ */
-
-.site-footer {
-    padding: 30px 0;
-    margin-top: 60px;
-    border-top: 1px solid #eee;
-    text-align: center;
+.brand-name {
+    color: var(--text);
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
 }
 
-.site-footer p {
+.brand-name > span {
+    color: var(--accent);
+}
+
+/* LINKS */
+
+.site-header .navbar-nav {
+    gap: 8px;
+}
+
+.site-header .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 42px;
     margin: 0;
-    color: #888;
-    font-size: 12px;
+    padding: 10px 16px !important;
+    border-radius: var(--radius-pill);
+    color: var(--text-soft);
+    font-size: 14px;
+    font-weight: 600;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
 }
+
+.site-header .nav-link:hover {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+.site-header .nav-link.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+}
+
+/* =====================================================
+   BOTÃO MOBILE
+   ===================================================== */
+
+.site-header .navbar-toggler {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+.site-header .navbar-toggler:hover {
+    background: var(--surface-alt);
+}
+
+.site-header .navbar-toggler:focus {
+    box-shadow: var(--ring);
+}
+
+/* Mostrar somente em telas menores que 992px */
+@media (max-width: 991.98px) {
+    .site-header .navbar-toggler {
+        display: flex;
+    }
+}
+
+/* ANIMAÇÃO DO MENU */
+
+@media (min-width: 992px) {
+    .site-header .navbar-collapse {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 991px) {
+    .site-header .navbar {
+        min-height: 72px;
+    }
+
+    .site-header .navbar-collapse {
+        padding: 14px 0 8px;
+        animation: menuFadeIn 0.25s ease;
+    }
+
+    .site-header .navbar-nav {
+        align-items: stretch !important;
+        gap: 4px;
+    }
+
+    .site-header .nav-link {
+        width: 100%;
+        padding: 12px 14px !important;
+        border-radius: 9px;
+    }
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ACESSIBILIDADE */
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header *,
+    .site-header *::before,
+    .site-header *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+
