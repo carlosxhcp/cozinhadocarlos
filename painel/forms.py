@@ -147,7 +147,8 @@ class CategoriaForm(forms.ModelForm):
             }),
 
             'imagem': forms.ClearableFileInput(attrs={
-                'class': 'form-control',
+                'class': 'form-control image-input',
+                'accept': 'image/*',
             }),
         }
 

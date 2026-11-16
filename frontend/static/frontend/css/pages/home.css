@@ -1,3 +1,4 @@
+
 /* =====================================================
    VARIÁVEIS
    ===================================================== */
@@ -30,7 +31,7 @@
 
 
 /* =====================================================
-   BUSCA + RESULTADOS (BLOCO UNIFICADO)
+   BUSCA + RESULTADOS
    ===================================================== */
 
 .discover {
@@ -62,13 +63,18 @@
     letter-spacing: -0.035em;
 }
 
-/* ===== Modo de pesquisa (segmented control) ===== */
+
+/* =====================================================
+   MODO DE PESQUISA
+   ===================================================== */
+
 .search-mode {
     width: 100%;
     max-width: 680px;
 }
 
 .search-mode-options {
+    position: relative;
     display: flex;
     gap: 4px;
     margin-bottom: 14px;
@@ -78,6 +84,8 @@
 }
 
 .search-mode-button {
+    position: relative;
+    z-index: 1;
     flex: 1;
     display: inline-flex;
     align-items: center;
@@ -92,33 +100,62 @@
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+        color 0.3s ease,
+        background 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease;
 }
 
 .search-mode-button:hover {
-    color: var(--text);
+    color: var(--accent);
 }
 
 .search-mode-button.active {
     background: var(--surface);
     color: var(--accent);
-    box-shadow: 0 1px 3px rgba(11, 18, 32, 0.12);
+    box-shadow: 0 2px 8px rgba(11, 18, 32, 0.10);
 }
 
-/* ===== Painéis (sem deslocamento) ===== */
-/* ===== Painéis de pesquisa com altura fixa ===== */
+.search-mode-button:active {
+    transform: scale(0.97);
+}
+
+.search-mode-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+
+/* =====================================================
+   PAINÉIS DE PESQUISA
+   ===================================================== */
+
 .search-panel {
     display: none;
     width: 100%;
     height: 190px;
+    opacity: 0;
+    transform: translateY(12px);
 }
 
 .search-panel.active {
     display: block;
-    animation: panelIn 0.25s ease;
+    animation: searchPanelIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Mantém o conteúdo alinhado */
+@keyframes searchPanelIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .search-panel .hero-search,
 .search-panel .ingredient-search {
     width: 100%;
@@ -130,23 +167,11 @@
     align-items: center;
 }
 
-/* Reserva espaço para os ingredientes selecionados */
-.selected-ingredients {
-    min-height: 38px;
-    align-content: flex-start;
-}
 
-/* Mantém os botões na mesma posição */
-.ingredient-search-actions {
-    margin-top: 16px;
-}
+/* =====================================================
+   PESQUISA POR RECEITA
+   ===================================================== */
 
-@keyframes panelIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* ===== Pesquisa por receita ===== */
 .hero-search {
     display: flex;
     align-items: center;
@@ -206,7 +231,11 @@
     transform: scale(0.97);
 }
 
-/* ===== Pesquisa por ingrediente ===== */
+
+/* =====================================================
+   PESQUISA POR INGREDIENTE
+   ===================================================== */
+
 .ingredient-search {
     width: 100%;
 }
@@ -228,6 +257,7 @@
     font-size: 1rem;
     box-shadow: var(--shadow-sm);
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
 }
 
 #ingredient-input::placeholder {
@@ -239,7 +269,11 @@
     box-shadow: var(--ring);
 }
 
-/* Sugestões */
+
+/* =====================================================
+   SUGESTÕES DE INGREDIENTES
+   ===================================================== */
+
 .ingredient-suggestions {
     position: absolute;
     top: calc(100% + 8px);
@@ -288,13 +322,19 @@
     font-size: 0.9rem;
 }
 
-/* Ingredientes selecionados */
+
+/* =====================================================
+   INGREDIENTES SELECIONADOS
+   ===================================================== */
+
 .selected-ingredients {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
+    min-height: 38px;
     margin-top: 14px;
+    align-content: flex-start;
 }
 
 .selected-ingredients:empty {
@@ -316,8 +356,15 @@
 }
 
 @keyframes chipIn {
-    from { opacity: 0; transform: scale(0.9); }
-    to   { opacity: 1; transform: scale(1); }
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .selected-ingredient button {
@@ -342,7 +389,11 @@
     color: #fff;
 }
 
-/* Botões de ação */
+
+/* =====================================================
+   BOTÕES DE AÇÃO DOS INGREDIENTES
+   ===================================================== */
+
 .ingredient-search-actions {
     display: flex;
     flex-wrap: wrap;
@@ -359,8 +410,11 @@
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease,
-                border-color 0.2s ease, transform 0.15s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
 #search-ingredients {
@@ -390,7 +444,11 @@
     transform: scale(0.97);
 }
 
-/* Foco por teclado */
+
+/* =====================================================
+   ACESSIBILIDADE DOS CONTROLES
+   ===================================================== */
+
 .search-mode-button:focus-visible,
 .hero-search button:focus-visible,
 #search-ingredients:focus-visible,
@@ -410,9 +468,18 @@
     animation: panelIn 0.3s ease;
 }
 
-/* Esconde o bloco de resultados enquanto não há nada para mostrar */
 .discover-results:has(.recipes-grid:empty) {
     display: none;
+}
+
+@keyframes panelIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .section-header {
@@ -460,7 +527,11 @@
     transition: opacity 0.2s ease;
 }
 
-/* ===== Card de receita ===== */
+
+/* =====================================================
+   CARDS DE RECEITAS
+   ===================================================== */
+
 .recipe-card {
     display: flex;
     flex-direction: column;
@@ -471,8 +542,10 @@
     color: inherit;
     text-decoration: none;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.25s ease, box-shadow 0.25s ease,
-                border-color 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
     animation: cardIn 0.35s ease both;
 }
 
@@ -488,8 +561,15 @@
 }
 
 @keyframes cardIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .recipe-image {
@@ -581,7 +661,11 @@
     color: var(--accent);
 }
 
-/* ===== Estado "nenhuma receita encontrada" ===== */
+
+/* =====================================================
+   ESTADO: NENHUMA RECEITA ENCONTRADA
+   ===================================================== */
+
 .empty-message {
     grid-column: 1 / -1;
     display: flex;
@@ -659,8 +743,10 @@
     overflow: hidden;
     color: var(--text);
     text-decoration: none;
-    transition: transform 0.25s ease, box-shadow 0.25s ease,
-                border-color 0.25s ease;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
 }
 
 .category-card img,
@@ -727,6 +813,35 @@
 
 
 /* =====================================================
+   PADRONIZAÇÃO DAS BARRAS DE PESQUISA
+   ===================================================== */
+
+#search-recipe-panel .hero-search,
+#search-ingredient-panel .ingredient-search,
+#search-ingredient-panel .ingredient-input-wrapper {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#search-input,
+#ingredient-input {
+    height: 54px;
+    box-sizing: border-box;
+}
+
+#ingredient-input {
+    width: 100%;
+}
+
+#search-recipe-panel,
+#search-ingredient-panel {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
    RESPONSIVIDADE
    ===================================================== */
 
@@ -760,9 +875,10 @@
         width: 100%;
         border-radius: var(--radius-sm);
     }
+
     .search-panel {
-    height: 230px;
-}
+        height: 230px;
+    }
 }
 
 @media (max-width: 576px) {
@@ -817,33 +933,6 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
-}
-
-
-/* ===== Padronização das barras de pesquisa ===== */
-
-#search-recipe-panel .hero-search,
-#search-ingredient-panel .ingredient-search,
-#search-ingredient-panel .ingredient-input-wrapper {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-#search-input,
-#ingredient-input {
-    height: 54px;
-    box-sizing: border-box;
-}
-
-#ingredient-input {
-    width: 100%;
-}
-
-/* Mantém os dois painéis com a mesma largura */
-#search-recipe-panel,
-#search-ingredient-panel {
-    width: 100%;
-    box-sizing: border-box;
 }

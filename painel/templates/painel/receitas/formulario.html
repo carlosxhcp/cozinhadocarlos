@@ -31,14 +31,68 @@
 
     <div class="content-card form-card">
 
-        <div class="card-heading">
-            <div>
-                <h3>Informações gerais</h3>
-                <p>Dados principais da receita.</p>
-            </div>
-        </div>
 
         <div class="form-content">
+
+<div class="form-field image-field">
+    <label for="id_imagem">Imagem da receita</label>
+
+    <div class="image-upload-container">
+
+        <div class="image-preview" id="image-preview">
+            {% if receita.imagem %}
+                <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
+            {% else %}
+                <div class="image-placeholder">
+                    <i class="bi bi-image"></i>
+                    <span>Nenhuma imagem</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="image-upload-controls">
+
+            <label for="id_imagem" class="image-select-button">
+                <i class="bi bi-upload"></i>
+                Escolher imagem
+            </label>
+
+            <input
+                type="file"
+                name="imagem"
+                id="id_imagem"
+                class="image-input"
+                accept="image/*"
+            >
+
+            <span class="image-file-name" id="image-file-name">
+            </span>
+
+            <label
+                class="image-remove-button"
+                id="image-remove-button"
+                {% if not receita.imagem %}style="display: none;"{% endif %}
+            >
+                <input
+                    type="checkbox"
+                    name="imagem-clear"
+                    id="imagem-clear"
+                    value="on"
+                    hidden
+                >
+                <i class="bi bi-trash"></i>
+                Remover imagem
+            </label>
+
+        </div>
+    </div>
+
+    {% if form.imagem.errors %}
+        <div class="text-danger small mt-2">
+            {{ form.imagem.errors }}
+        </div>
+    {% endif %}
+</div>
 
             <div class="form-field">
                 <label>Nome da receita</label>
@@ -62,10 +116,7 @@
                     {{ form.categoria }}
                 </div>
 
-                <div class="form-field">
-                    <label>Imagem</label>
-                    {{ form.imagem }}
-                </div>
+
 
                 <div class="form-field">
                     <label>Tempo de preparo (minutos)</label>
@@ -78,13 +129,6 @@
                 </div>
 
             </div>
-
-            {% if receita.imagem %}
-            <div class="current-image">
-                <span>Imagem atual:</span>
-                <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
-            </div>
-            {% endif %}
 
             <div class="form-field">
                 <label>Modo de preparo</label>
@@ -133,16 +177,16 @@
 
                     <div class="ingredient-actions">
 
-    <div class="delete-input" hidden>
-        {{ ingrediente_form.DELETE }}
-    </div>
+                        <div class="delete-input" hidden>
+                            {{ ingrediente_form.DELETE }}
+                        </div>
 
-    <button type="button" class="btn-remove-ingredient">
-        <i class="bi bi-trash"></i>
-        Remover
-    </button>
+                        <button type="button" class="btn-remove-ingredient">
+                            <i class="bi bi-trash"></i>
+                            Remover
+                        </button>
 
-</div>
+                    </div>
 
                     {% if ingrediente_form.errors %}
                     <div class="alert alert-danger">
@@ -186,16 +230,16 @@
 
                     <div class="ingredient-actions">
 
-    <div class="delete-input" hidden>
-        {{ formset.empty_form.DELETE }}
-    </div>
+                        <div class="delete-input" hidden>
+                            {{ formset.empty_form.DELETE }}
+                        </div>
 
-    <button type="button" class="btn-remove-ingredient">
-        <i class="bi bi-trash"></i>
-        Remover
-    </button>
+                        <button type="button" class="btn-remove-ingredient">
+                            <i class="bi bi-trash"></i>
+                            Remover
+                        </button>
 
-</div>
+                    </div>
                 </div>
 
             </template>
@@ -239,102 +283,102 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    const container = document.getElementById('ingredient-forms');
-    const addButton = document.getElementById('add-ingredient');
-    const template = document.getElementById('empty-ingredient-form');
+        const container = document.getElementById('ingredient-forms');
+        const addButton = document.getElementById('add-ingredient');
+        const template = document.getElementById('empty-ingredient-form');
 
-    if (!container || !addButton || !template) return;
+        if (!container || !addButton || !template) return;
 
-    const prefix = container.dataset.prefix;
+        const prefix = container.dataset.prefix;
 
-    const totalForms = document.getElementById(
-        `id_${prefix}-TOTAL_FORMS`
-    );
-
-    // Inicializa o TomSelect quando uma nova linha é criada.
-    function initializeTomSelect(element) {
-        element.querySelectorAll('.tom-select').forEach(function (select) {
-            if (typeof TomSelect !== 'undefined' && !select.tomselect) {
-                new TomSelect(select, {
-                    create: false,
-                    allowEmptyOption: true,
-                    placeholder: select.dataset.placeholder || 'Pesquisar...'
-                });
-            }
-        });
-    }
-
-    // Adiciona ingrediente.
-    addButton.addEventListener('click', function () {
-
-        const index = parseInt(totalForms.value, 10);
-
-        const html = template.innerHTML.replace(/__prefix__/g, index);
-
-        const wrapper = document.createElement('div');
-        wrapper.innerHTML = html.trim();
-
-        const newForm = wrapper.firstElementChild;
-
-        container.appendChild(newForm);
-
-        totalForms.value = index + 1;
-
-        initializeTomSelect(newForm);
-    });
-
-    // Remove ingrediente.
-    container.addEventListener('click', function (event) {
-
-        const button = event.target.closest('.btn-remove-ingredient');
-
-        if (!button) return;
-
-        const row = button.closest('.ingredient-row');
-
-        if (!row) return;
-
-        const deleteCheckbox = row.querySelector(
-            'input[name$="-DELETE"]'
+        const totalForms = document.getElementById(
+            `id_${prefix}-TOTAL_FORMS`
         );
 
-        if (deleteCheckbox) {
-            deleteCheckbox.checked = true;
-            row.hidden = true;
+        // Inicializa o TomSelect quando uma nova linha é criada.
+        function initializeTomSelect(element) {
+            element.querySelectorAll('.tom-select').forEach(function (select) {
+                if (typeof TomSelect !== 'undefined' && !select.tomselect) {
+                    new TomSelect(select, {
+                        create: false,
+                        allowEmptyOption: true,
+                        placeholder: select.dataset.placeholder || 'Pesquisar...'
+                    });
+                }
+            });
         }
 
-    });
+        // Adiciona ingrediente.
+        addButton.addEventListener('click', function () {
 
-});
+            const index = parseInt(totalForms.value, 10);
+
+            const html = template.innerHTML.replace(/__prefix__/g, index);
+
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = html.trim();
+
+            const newForm = wrapper.firstElementChild;
+
+            container.appendChild(newForm);
+
+            totalForms.value = index + 1;
+
+            initializeTomSelect(newForm);
+        });
+
+        // Remove ingrediente.
+        container.addEventListener('click', function (event) {
+
+            const button = event.target.closest('.btn-remove-ingredient');
+
+            if (!button) return;
+
+            const row = button.closest('.ingredient-row');
+
+            if (!row) return;
+
+            const deleteCheckbox = row.querySelector(
+                'input[name$="-DELETE"]'
+            );
+
+            if (deleteCheckbox) {
+                deleteCheckbox.checked = true;
+                row.hidden = true;
+            }
+
+        });
+
+    });
 </script>
 
 
 <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    tinymce.init({
-        selector: '#editor-modo-preparo',
-        license_key: 'gpl',
+        tinymce.init({
+            selector: '#editor-modo-preparo',
+            license_key: 'gpl',
 
-        height: 400,
-        menubar: false,
+            height: 400,
+            menubar: false,
 
-        plugins: 'lists link',
+            plugins: 'lists link',
 
-        toolbar: [
-            'undo redo | blocks | bold italic underline',
-            '| bullist numlist | link | removeformat'
-        ],
+            toolbar: [
+                'undo redo | blocks | bold italic underline',
+                '| bullist numlist | link | removeformat'
+            ],
 
-        language: 'pt_BR',
+            language: 'pt_BR',
 
-        branding: false,
-        promotion: false,
+            branding: false,
+            promotion: false,
 
-        content_style: `
+            content_style: `
             body {
                 font-family: Arial, sans-serif;
                 font-size: 14px;
@@ -347,11 +391,76 @@ document.addEventListener('DOMContentLoaded', function () {
                 font-weight: bold;
             }
         `
+        });
+
+    });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const input = document.getElementById('id_imagem');
+    const preview = document.getElementById('image-preview');
+    const removeButton = document.getElementById('image-remove-button');
+    const clearCheckbox = document.getElementById('imagem-clear');
+    const fileName = document.getElementById('image-file-name');
+
+    if (!input || !preview || !removeButton || !clearCheckbox) return;
+
+    // Selecionar uma nova imagem
+    input.addEventListener('change', function () {
+
+        const file = this.files[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith('image/')) {
+            alert('Selecione um arquivo de imagem válido.');
+            this.value = '';
+            return;
+        }
+
+        // Cancela a marcação de exclusão da imagem atual
+        clearCheckbox.checked = false;
+
+        // Mostra novamente o botão de remover
+        removeButton.style.display = 'inline-flex';
+
+        fileName.textContent = file.name;
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            preview.innerHTML = `
+                <img src="${event.target.result}" alt="Pré-visualização">
+            `;
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    // Remover imagem
+    removeButton.addEventListener('click', function (event) {
+
+        event.preventDefault();
+
+        clearCheckbox.checked = true;
+        input.value = '';
+
+        preview.innerHTML = `
+            <div class="image-placeholder">
+                <i class="bi bi-image"></i>
+                <span>Nenhuma imagem</span>
+            </div>
+        `;
+
+        fileName.textContent = 'Imagem removida';
+
+        removeButton.style.display = 'none';
     });
 
 });
 </script>
-
 
 
 {% endblock %}
