@@ -1,4 +1,4 @@
-import os, dj_database_url
+import os, dj_database_url, cloudinary
 from pathlib import Path
 
 
@@ -7,6 +7,10 @@ from pathlib import Path
 # ==========================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+from dotenv import load_dotenv
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # ==========================================================
@@ -168,10 +172,25 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Cloudinary para imagens enviadas pelos usuários.
+
+# ==========================================================
+# CLOUDINARY
+# ==========================================================
+
 CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     'SECURE': True,
 }
+
+# Configuração do SDK do Cloudinary.
+cloudinary.config(
+    cloud_name=CLOUDINARY_STORAGE['CLOUD_NAME'],
+    api_key=CLOUDINARY_STORAGE['API_KEY'],
+    api_secret=CLOUDINARY_STORAGE['API_SECRET'],
+    secure=True,
+)
 
 STORAGES = {
     'default': {
@@ -223,3 +242,4 @@ LOGOUT_REDIRECT_URL = 'painel:login'
 # ==========================================================
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
