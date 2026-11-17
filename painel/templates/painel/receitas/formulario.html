@@ -348,13 +348,20 @@
     });
 </script>
 
-
 <script src="https://cdn.jsdelivr.net/npm/tinymce@7/tinymce.min.js"></script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
+        const textarea = document.getElementById('editor-modo-preparo');
+        const form = textarea.closest('form');
+
+        // Remove a validação nativa do campo escondido.
+        textarea.removeAttribute('required');
+
         tinymce.init({
             selector: '#editor-modo-preparo',
+
             license_key: 'gpl',
 
             height: 400,
@@ -367,28 +374,52 @@
                 '| bullist numlist | link | removeformat'
             ],
 
-            language: 'pt_BR',
-
             branding: false,
             promotion: false,
 
+            setup: function (editor) {
+                editor.on('init', function () {
+                    textarea.removeAttribute('required');
+                });
+            },
+
             content_style: `
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-                line-height: 1.7;
-                color: #333;
-                padding: 10px;
+                body {
+                    font-family: Arial, sans-serif;
+                    font-size: 14px;
+                    line-height: 1.7;
+                    color: #333;
+                    padding: 10px;
+                }
+
+                h2, h3 {
+                    font-weight: bold;
+                }
+            `
+        });
+
+        // Sincroniza o conteúdo antes de enviar.
+        form.addEventListener('submit', function (event) {
+
+            tinymce.triggerSave();
+
+            if (!textarea.value.trim()) {
+                event.preventDefault();
+
+                alert('Preencha o modo de preparo da receita.');
+
+                if (tinymce.get('editor-modo-preparo')) {
+                    tinymce.get('editor-modo-preparo').focus();
+                }
+
+                return;
             }
 
-            h2, h3 {
-                font-weight: bold;
-            }
-        `
         });
 
     });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
