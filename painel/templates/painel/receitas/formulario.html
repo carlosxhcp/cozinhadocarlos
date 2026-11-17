@@ -21,11 +21,22 @@
 
     {% csrf_token %}
 
-    {% if form.errors or formset.errors %}
+    {% if form.errors or formset.errors or formset.non_form_errors %}
     <div class="alert alert-danger">
-        Existem campos com erros. Confira as informações preenchidas.
+        <strong>Não foi possível salvar a receita.</strong>
+
+        {% if form.errors %}
+        <hr>
+        <strong>Erros da receita:</strong>
         {{ form.errors }}
+        {% endif %}
+
+        {% if formset.errors or formset.non_form_errors %}
+        <hr>
+        <strong>Erros dos ingredientes:</strong>
+        {{ formset.non_form_errors }}
         {{ formset.errors }}
+        {% endif %}
     </div>
     {% endif %}
 
@@ -34,65 +45,50 @@
 
         <div class="form-content">
 
-<div class="form-field image-field">
-    <label for="id_imagem">Imagem da receita</label>
+            <div class="form-field image-field">
+                <label for="id_imagem">Imagem da receita</label>
 
-    <div class="image-upload-container">
+                <div class="image-upload-container">
 
-        <div class="image-preview" id="image-preview">
-            {% if receita.imagem %}
-                <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
-            {% else %}
-                <div class="image-placeholder">
-                    <i class="bi bi-image"></i>
-                    <span>Nenhuma imagem</span>
+                    <div class="image-preview" id="image-preview">
+                        {% if receita.imagem %}
+                        <img src="{{ receita.imagem.url }}" alt="{{ receita.nome }}">
+                        {% else %}
+                        <div class="image-placeholder">
+                            <i class="bi bi-image"></i>
+                            <span>Nenhuma imagem</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="image-upload-controls">
+
+                        <label for="id_imagem" class="image-select-button">
+                            <i class="bi bi-upload"></i>
+                            Escolher imagem
+                        </label>
+
+                        <input type="file" name="imagem" id="id_imagem" class="image-input" accept="image/*">
+
+                        <span class="image-file-name" id="image-file-name">
+                        </span>
+
+                        <label class="image-remove-button" id="image-remove-button" {% if not receita.imagem
+                            %}style="display: none;" {% endif %}>
+                            <input type="checkbox" name="imagem-clear" id="imagem-clear" value="on" hidden>
+                            <i class="bi bi-trash"></i>
+                            Remover imagem
+                        </label>
+
+                    </div>
                 </div>
-            {% endif %}
-        </div>
 
-        <div class="image-upload-controls">
-
-            <label for="id_imagem" class="image-select-button">
-                <i class="bi bi-upload"></i>
-                Escolher imagem
-            </label>
-
-            <input
-                type="file"
-                name="imagem"
-                id="id_imagem"
-                class="image-input"
-                accept="image/*"
-            >
-
-            <span class="image-file-name" id="image-file-name">
-            </span>
-
-            <label
-                class="image-remove-button"
-                id="image-remove-button"
-                {% if not receita.imagem %}style="display: none;"{% endif %}
-            >
-                <input
-                    type="checkbox"
-                    name="imagem-clear"
-                    id="imagem-clear"
-                    value="on"
-                    hidden
-                >
-                <i class="bi bi-trash"></i>
-                Remover imagem
-            </label>
-
-        </div>
-    </div>
-
-    {% if form.imagem.errors %}
-        <div class="text-danger small mt-2">
-            {{ form.imagem.errors }}
-        </div>
-    {% endif %}
-</div>
+                {% if form.imagem.errors %}
+                <div class="text-danger small mt-2">
+                    {{ form.imagem.errors }}
+                </div>
+                {% endif %}
+            </div>
 
             <div class="form-field">
                 <label>Nome da receita</label>
@@ -397,69 +393,69 @@
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    const input = document.getElementById('id_imagem');
-    const preview = document.getElementById('image-preview');
-    const removeButton = document.getElementById('image-remove-button');
-    const clearCheckbox = document.getElementById('imagem-clear');
-    const fileName = document.getElementById('image-file-name');
+        const input = document.getElementById('id_imagem');
+        const preview = document.getElementById('image-preview');
+        const removeButton = document.getElementById('image-remove-button');
+        const clearCheckbox = document.getElementById('imagem-clear');
+        const fileName = document.getElementById('image-file-name');
 
-    if (!input || !preview || !removeButton || !clearCheckbox) return;
+        if (!input || !preview || !removeButton || !clearCheckbox) return;
 
-    // Selecionar uma nova imagem
-    input.addEventListener('change', function () {
+        // Selecionar uma nova imagem
+        input.addEventListener('change', function () {
 
-        const file = this.files[0];
+            const file = this.files[0];
 
-        if (!file) return;
+            if (!file) return;
 
-        if (!file.type.startsWith('image/')) {
-            alert('Selecione um arquivo de imagem válido.');
-            this.value = '';
-            return;
-        }
+            if (!file.type.startsWith('image/')) {
+                alert('Selecione um arquivo de imagem válido.');
+                this.value = '';
+                return;
+            }
 
-        // Cancela a marcação de exclusão da imagem atual
-        clearCheckbox.checked = false;
+            // Cancela a marcação de exclusão da imagem atual
+            clearCheckbox.checked = false;
 
-        // Mostra novamente o botão de remover
-        removeButton.style.display = 'inline-flex';
+            // Mostra novamente o botão de remover
+            removeButton.style.display = 'inline-flex';
 
-        fileName.textContent = file.name;
+            fileName.textContent = file.name;
 
-        const reader = new FileReader();
+            const reader = new FileReader();
 
-        reader.onload = function (event) {
-            preview.innerHTML = `
+            reader.onload = function (event) {
+                preview.innerHTML = `
                 <img src="${event.target.result}" alt="Pré-visualização">
             `;
-        };
+            };
 
-        reader.readAsDataURL(file);
-    });
+            reader.readAsDataURL(file);
+        });
 
-    // Remover imagem
-    removeButton.addEventListener('click', function (event) {
+        // Remover imagem
+        removeButton.addEventListener('click', function (event) {
 
-        event.preventDefault();
+            event.preventDefault();
 
-        clearCheckbox.checked = true;
-        input.value = '';
+            clearCheckbox.checked = true;
+            input.value = '';
 
-        preview.innerHTML = `
+            preview.innerHTML = `
             <div class="image-placeholder">
                 <i class="bi bi-image"></i>
                 <span>Nenhuma imagem</span>
             </div>
         `;
 
-        fileName.textContent = 'Imagem removida';
+            fileName.textContent = 'Imagem removida';
 
-        removeButton.style.display = 'none';
+            removeButton.style.display = 'none';
+        });
+
     });
-
-});
 </script>
 
 

@@ -1,6 +1,8 @@
 
 from django import forms
 from django.forms import inlineformset_factory
+from django.utils.text import slugify
+
 
 from receitas.models import Receita, ReceitaIngrediente
 from categorias.models import Categoria
@@ -8,6 +10,15 @@ from ingredientes.models import Ingrediente
 
 
 class ReceitaForm(forms.ModelForm):
+
+    def clean_slug(self):
+        slug = self.cleaned_data.get('slug')
+
+        if not slug:
+            nome = self.cleaned_data.get('nome', '')
+            slug = slugify(nome)
+
+        return slug
 
     # Permite gerar o slug automaticamente caso fique vazio.
     slug = forms.SlugField(
