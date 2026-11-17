@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Cloudinary
+    'cloudinary_storage',
+    'cloudinary',
+
     # Aplicativos do projeto
     'categorias',
     'receitas',
@@ -155,18 +159,23 @@ USE_TZ = True
 
 
 # ==========================================================
-# ARQUIVOS ESTÁTICOS (CSS, JS E IMAGENS DO SITE)
+# ARQUIVOS ESTÁTICOS E MÍDIA
 # ==========================================================
 
 STATIC_URL = '/static/'
-
-# Pasta onde o collectstatic reúne os arquivos.
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise comprime e identifica os arquivos para o navegador.
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Cloudinary para imagens enviadas pelos usuários.
+CLOUDINARY_STORAGE = {
+    'SECURE': True,
+}
+
 STORAGES = {
     'default': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
     },
     'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
