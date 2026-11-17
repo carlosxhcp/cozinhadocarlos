@@ -88,7 +88,16 @@ def criar_receita(request):
         form = ReceitaForm(request.POST, request.FILES)
         formset = ReceitaIngredienteFormSet(request.POST, instance=receita)
 
-        if form.is_valid() and formset.is_valid():
+        form_valido = form.is_valid()
+        formset_valido = formset.is_valid()
+
+        print("FORMULÁRIO VÁLIDO:", form_valido)
+        print("ERROS DO FORMULÁRIO:", form.errors)
+        print("FORMSET VÁLIDO:", formset_valido)
+        print("ERROS DOS INGREDIENTES:", formset.errors)
+        print("ERROS GERAIS DO FORMSET:", formset.non_form_errors())
+
+        if form_valido and formset_valido:
             receita = form.save(commit=False)
 
             # Define o status conforme o botão pressionado
