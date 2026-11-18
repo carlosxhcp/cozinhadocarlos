@@ -1,0 +1,224 @@
+
+/* =====================================================
+   CABEÇALHO
+   ===================================================== */
+
+.site-header {
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #eceef2;
+}
+
+.site-header .navbar {
+    min-height: 82px;
+    padding: 0;
+}
+
+.site-header .container {
+    min-height: 82px;
+}
+
+/* =====================================================
+   LOGO
+   ===================================================== */
+
+.site-header .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #3b0072;
+    color: #ffffff;
+    border-radius: 12px;
+}
+
+.brand-icon svg {
+    width: 23px;
+    height: 23px;
+    stroke-width: 1.8;
+}
+
+.brand-name {
+    color: #111111;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+.brand-name span {
+    color: #3b0072;
+}
+
+/* =====================================================
+   LINKS DO MENU
+   ===================================================== */
+
+.site-header .navbar-nav {
+    gap: 8px;
+}
+
+.site-header .nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 17px !important;
+    color: #626875;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.site-header .nav-link svg {
+    width: 17px;
+    height: 17px;
+    stroke-width: 1.8;
+}
+
+.site-header .nav-link:hover {
+    color: #3b0072;
+    background: #f5f0fa;
+}
+
+.site-header .nav-link.active {
+    color: #3b0072;
+    background: #f5f0fa;
+}
+
+/* =====================================================
+   BOTÃO MOBILE
+   ===================================================== */
+
+.site-header .navbar-toggler {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 43px;
+    height: 43px;
+    padding: 0;
+    color: #222;
+    background: #f5f6f8;
+    border: 1px solid #e8e9ed;
+    border-radius: 9px;
+    box-shadow: none;
+}
+
+.site-header .navbar-toggler svg {
+    width: 21px;
+    height: 21px;
+}
+
+@media (max-width: 991px) {
+    .site-header .navbar-toggler {
+        display: flex;
+    }
+}
+
+/* =====================================================
+   RESPONSIVIDADE
+   ===================================================== */
+
+@media (max-width: 991px) {
+
+    .site-header .navbar {
+        padding: 12px 0;
+    }
+
+    .site-header .container {
+        min-height: auto;
+    }
+
+    .site-header .navbar-collapse {
+        padding-top: 16px;
+    }
+
+    .site-header .navbar-nav {
+        align-items: stretch !important;
+        gap: 5px;
+    }
+
+    .site-header .nav-link {
+        padding: 13px 14px !important;
+    }
+
+}
+
+
+/* =====================================================
+   MENU ESCURO — VÍDEO ABERTO
+   ===================================================== */
+
+body:has(.discover:not(.has-results)) .site-header {
+    background: #080808;
+    border-bottom: none;
+    transition: background 0.35s ease;
+}
+
+body:has(.discover:not(.has-results)) .brand-name {
+    color: #ffffff;
+}
+
+body:has(.discover:not(.has-results)) .brand-name span {
+    color: #b58be8;
+}
+
+body:has(.discover:not(.has-results)) .site-header .nav-link {
+    color: #c7c7c7;
+}
+
+body:has(.discover:not(.has-results)) .site-header .nav-link:hover,
+body:has(.discover:not(.has-results)) .site-header .nav-link.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+body:has(.discover:not(.has-results)) .site-header .navbar-toggler {
+    color: #ffffff;
+    background: #202020;
+    border-color: #383838;
+}
+
+/* =====================================================
+   MENU MOBILE ESCURO
+   ===================================================== */
+
+@media (max-width: 991px) {
+
+    body:has(.discover:not(.has-results)) .site-header .navbar-collapse {
+        background: #080808;
+    }
+
+    body:has(.discover:not(.has-results)) .site-header .nav-link {
+        color: #dddddd;
+    }
+
+    body:has(.discover:not(.has-results)) .site-header .nav-link:hover,
+    body:has(.discover:not(.has-results)) .site-header .nav-link.active {
+        color: #ffffff;
+        background: #242424;
+    }
+}
+
+/* =====================================================
+   TRANSIÇÃO ENTRE OS MODOS
+   ===================================================== */
+
+.site-header,
+.site-header .nav-link,
+.site-header .brand-name,
+.site-header .navbar-toggler {
+    transition: all 0.35s ease;
+}

@@ -17,6 +17,7 @@
 
     <link rel="stylesheet" href="{% static 'frontend/base.css' %}">
     <link rel="stylesheet" href="{% static 'frontend/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'frontend/navbar.css' %}">
 
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -29,17 +30,15 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
 
-            <!-- MARCA / LOGO -->
+            <!-- LOGO -->
             <a class="navbar-brand" href="{% url 'home' %}">
-
-                <span class="brand-logo">
-                    <i class="bi bi-egg-fried"></i>
+                <span class="brand-icon">
+                    <i data-lucide="chef-hat"></i>
                 </span>
 
                 <span class="brand-name">
-                    
+                    A<span>Cozinha</span>
                 </span>
-
             </a>
 
             <!-- BOTÃO MOBILE -->
@@ -50,8 +49,7 @@
                     aria-expanded="false"
                     aria-label="Abrir menu">
 
-                <span class="navbar-toggler-icon"></span>
-
+                <i data-lucide="menu"></i>
             </button>
 
             <!-- MENU -->
@@ -61,18 +59,21 @@
 
                     <li class="nav-item">
                         <a class="nav-link active" href="{% url 'home' %}">
+                            <i data-lucide="house"></i>
                             Início
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" href="#">
+                            <i data-lucide="book-open"></i>
                             Receitas
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link" href="#">
+                            <i data-lucide="grid-2x2"></i>
                             Categorias
                         </a>
                     </li>
@@ -84,6 +85,7 @@
         </div>
     </nav>
 </header>
+
 
     <main>
         {% block content %}{% endblock %}
