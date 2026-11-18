@@ -9,32 +9,42 @@ import sys
 database_url = os.environ.get("DATABASE_URL_UNPOOLED")
 
 if not database_url:
-    raise RuntimeError("DATABASE_URL_UNPOOLED não configurada na Vercel.")
+    raise RuntimeError("DATABASE_URL_UNPOOLED não configurada.")
 
 os.environ["DATABASE_URL"] = database_url
+os.environ["DJANGO_SETTINGS_MODULE"] = "core.settings"
 
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE",
-    "core.settings"
-)
+# ==========================================================
+# DIAGNÓSTICO
+# ==========================================================
+
+import django
+django.setup()
+
+from django.conf import settings
+from django.db import connections
+
+print("\n========== DIAGNÓSTICO ==========")
+
+print("Settings:", settings.SETTINGS_MODULE)
+print("Banco configurado:", settings.DATABASES)
+print("Engine:", settings.DATABASES["default"].get("ENGINE"))
+
+db = connections["default"]
+
+print("Engine da conexão:", db.settings_dict.get("ENGINE"))
+print("Backend:", db.__class__.__module__)
+
+print("================================\n")
 
 # ==========================================================
 # MIGRAÇÕES
 # ==========================================================
 
-print("Verificando configuração do banco de dados...")
-
-subprocess.run(
-    [sys.executable, "manage.py", "check"],
-    check=True,
-)
-
 subprocess.run(
     [sys.executable, "manage.py", "migrate", "--noinput"],
     check=True,
 )
-
-print("Migrações executadas com sucesso!")
 
 # ==========================================================
 # ARQUIVOS ESTÁTICOS
@@ -45,4 +55,4 @@ subprocess.run(
     check=True,
 )
 
-print("Arquivos estáticos coletados com sucesso!")
+print("Build concluído com sucesso!")
