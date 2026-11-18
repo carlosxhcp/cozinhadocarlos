@@ -33,6 +33,7 @@ def buscar_ingredientes(request):
 
     return JsonResponse({'ingredientes': ingredientes})
 
+
 def buscar_receitas(request):
     termo = request.GET.get('q', '').strip()
     ingredientes_ids = request.GET.getlist('ingredientes')
@@ -45,18 +46,21 @@ def buscar_receitas(request):
         receitas = receitas.filter(
             Q(nome__icontains=termo) |
             Q(descricao__icontains=termo) |
-            Q(categoria__nome__icontains=termo) |
-            Q(ingredientes__nome__icontains=termo)
+            Q(categoria__nome__icontains=termo)
         )
 
     if ingredientes_ids:
         receitas = (
             receitas
-            .filter(ingredientes__id__in=ingredientes_ids)
+            .filter(
+                ingredientes_utilizados__ingrediente__id__in=ingredientes_ids
+            )
             .annotate(
                 total_ingredientes_selecionados=Count(
-                    'ingredientes',
-                    filter=Q(ingredientes__id__in=ingredientes_ids),
+                    'ingredientes_utilizados__ingrediente',
+                    filter=Q(
+                        ingredientes_utilizados__ingrediente__id__in=ingredientes_ids
+                    ),
                     distinct=True
                 )
             )
@@ -72,6 +76,7 @@ def buscar_receitas(request):
         'frontend/partials/cards_receitas.html',
         {'receitas': receitas}
     )
+
 
 def detalhe_receita(request, slug):
     receita = get_object_or_404(
