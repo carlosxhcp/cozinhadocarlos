@@ -107,9 +107,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 
 
+# ==========================================================
 # BANCO DE DADOS
+# ==========================================================
 
-DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_URL = (
+    os.environ.get('DATABASE_URL')
+    or os.environ.get('DATABASE_URL_UNPOOLED')
+)
 
 if DATABASE_URL:
     DATABASES = {
@@ -119,6 +124,13 @@ if DATABASE_URL:
             ssl_require=True,
         )
     }
+
+    if not DATABASES['default'].get('ENGINE'):
+        raise RuntimeError(
+            'Não foi possível identificar o banco de dados. '
+            'Confira a DATABASE_URL.'
+        )
+
 else:
     DATABASES = {
         'default': {
