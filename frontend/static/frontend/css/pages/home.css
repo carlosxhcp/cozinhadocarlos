@@ -14,8 +14,8 @@
     --text-soft: #475467;
     --text-mute: #8a94a6;
 
-    --accent: #3b0072;
-    --accent-dark: #6100bd;
+    --accent: #190030;
+    --accent-dark: #3d0075;
     --accent-soft: #f1eafb;
 
     --radius-sm: 10px;
@@ -46,7 +46,7 @@
     padding: 0 0 70px;
     box-sizing: border-box;
 
-    background: #050505;
+    background: #d1d1d1;
 }
 
 .discover-background {
@@ -60,8 +60,9 @@
     object-fit: cover;
     object-position: center;
 
-    opacity: 0.55;
-    pointer-events: none;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 .discover .container {
@@ -80,9 +81,10 @@
     inset: 0;
     z-index: -1;
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.85);
 
     pointer-events: none;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 
@@ -90,9 +92,16 @@
    ESTADO APÓS A PESQUISA
    ===================================================== */
 
-.discover.has-results {
-    background: var(--bg);
-    animation: none;
+/* Esconde o vídeo após a pesquisa */
+.discover.has-results .discover-background {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Remove a camada escura também */
+.discover.has-results::after {
+    opacity: 0;
+    visibility: hidden;
 }
 
 .discover.has-results .discover-search {
@@ -102,6 +111,13 @@
 
 .discover.has-results .discover-heading h1 {
     font-size: clamp(1.8rem, 3vw, 2.4rem);
+    
+    
+}
+
+.discover-heading h1 {
+    font-family: 'DM Sans', sans-serif;
+
 }
 
 .discover.has-results .discover-heading p {
@@ -153,16 +169,21 @@
 .discover-heading h1 {
     margin: 0;
 
-    color: white;
-  
+    color: #ffffff;
 
     font-size: clamp(2rem, 5vw, 3.3rem);
     font-weight: 800;
     line-height: 1.1;
     letter-spacing: -0.045em;
 
-    transition: font-size 0.35s ease;
+    transition: font-size 0.35s ease, color 0.35s ease;
 }
+
+/* Após pesquisar */
+.discover.has-results .discover-heading h1 {
+    color: #0b1220;
+}
+
 
 .discover-heading p {
     margin: 0;
